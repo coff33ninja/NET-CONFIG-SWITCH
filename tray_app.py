@@ -162,26 +162,29 @@ class TrayApp(QObject):
 
                 # Logic for "Open Router" based on active config for *this* adapter
                 # This part needs to use the specific status determined for *this* adapter
+                profile_name = None
                 if status_str.startswith("Static: "):
-                    active_profile_name_for_adapter = status_str.replace("Static: ", "")
-                    if active_profile_name_for_adapter != "(Custom/Unsaved)": # Ensure it's a named profile
-                        # Use the new DB method to get router-specific config
-                        router_config_details = self.db.get_router_config_for_profile(active_profile_name_for_adapter)
-                        
-                        if router_config_details: # This implies router_ip exists
-                            action_open_router = partial(
-                                self._internal_open_router_handler,
-                                router_config_details["router_ip"],
-                                router_config_details["gateway"], # Gateway from the profile
-                                router_config_details["router_port"],
-                                router_config_details["router_refresh_interval"],
-                                router_config_details["router_protocol"],
-                            )
-                            current_adapter_submenu_items.insert(2, pystray.Menu.SEPARATOR) # Insert before DHCP/Save
-                            current_adapter_submenu_items.insert(
-                                2, # Insert before DHCP/Save
-                                pystray.MenuItem(f"Open Router ({active_profile_name_for_adapter})", action_open_router),
-                            )
+                    profile_name = status_str.replace("Static: ", "")
+                elif status_str.startswith("DHCP: "):
+                    profile_name = status_str.replace("DHCP: ", "")
+                if profile_name and profile_name != "(Custom/Unsaved)":
+                    router_config_details = self.db.get_router_config_for_profile(profile_name)
+                    if router_config_details:
+                        router_ip = router_config_details.get("router_ip") or router_config_details.get("gateway")
+                        router_port = router_config_details.get("router_port")
+                        refresh_interval = router_config_details.get("router_refresh_interval", 5)
+                        protocol = router_config_details.get("router_protocol", "http")
+                        open_router_action = partial(
+                            self._internal_open_router_handler,
+                            router_ip,
+                            router_config_details.get("gateway"),
+                            router_port,
+                            refresh_interval,
+                            protocol,
+                        )
+                        current_adapter_submenu_items.append(
+                            pystray.MenuItem("Open Router", open_router_action)
+                        )
 
                 # The menu item for the adapter itself uses detailed_name_or_fallback
                 adapter_submenu = pystray.Menu(*current_adapter_submenu_items)
