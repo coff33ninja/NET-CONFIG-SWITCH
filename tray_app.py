@@ -390,15 +390,9 @@ class TrayApp(QObject):
     def update_tray_menu(self):
         if self.icon:
             self.icon.menu = self.get_pystray_menu()
-
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    app.setQuitOnLastWindowClosed(False)
-    tray_controller = TrayApp()
-    pystray_thread = threading.Thread(
-        target=tray_controller.start_pystray_in_thread,
-        daemon=True,
-    )
-    pystray_thread.start()
-    sys.exit(app.exec())
+            try:
+                self.icon.update_menu()  # Some pystray versions support this
+            except AttributeError:
+                # Workaround: hide and show to force refresh
+                self.icon.visible = False
+                self.icon.visible = True
