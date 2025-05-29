@@ -87,6 +87,38 @@ if exist "%VENV_PRIMARY_NAME%\Scripts\activate.bat" (
     set "VENV_DIR_TO_USE=%VENV_PRIMARY_NAME%"
 )
 
+REM Create virtual environment if it doesn't exist
+if not exist "%VENV_PRIMARY_NAME%" (
+    echo Creating virtual environment...
+    %PYTHON_CMD% -m venv "%VENV_PRIMARY_NAME%"
+    if errorlevel 1 (
+        echo ERROR: Failed to create virtual environment.
+        exit /B
+    )
+    echo Virtual environment created successfully.
+
+    REM Activate the virtual environment
+    call "%VENV_PRIMARY_NAME%\Scripts\activate.bat"
+
+    REM Install required packages
+    echo Installing required Python packages...
+    pip install PyQt6 pystray pillow keyring PyQt6-WebEngine pyinstaller cryptography WMI pywin32
+    if errorlevel 1 (
+        echo ERROR: Failed to install required packages.
+        exit /B
+    )
+    echo Python packages installed successfully.
+
+    REM Run pywin32 post-install script
+    echo Running pywin32 post-install script...
+    python .venv\Lib\site-packages\win32\scripts\pywin32_postinstall.py -install
+    if errorlevel 1 (
+        echo ERROR: Failed to run pywin32 post-install script.
+        exit /B
+    )
+    echo pywin32 post-install script completed successfully.
+)
+
 REM Activate virtual environment
 call "%VENV_DIR_TO_USE%\Scripts\activate.bat"
 if errorlevel 1 (
