@@ -180,9 +180,10 @@ class DBManager:
         configs = self.load_configs() # This loads all configs, including refresh interval
         profile_data = configs.get("networks", {}).get(profile_name)
 
-        if profile_data and profile_data.get("router_ip"):
+        # Ensure there's a target for the router browser
+        if profile_data and (profile_data.get("router_ip") or profile_data.get("gateway")):
             return {
-                "router_ip": profile_data["router_ip"],
+                "router_ip": profile_data.get("router_ip", ""), # Keep original router_ip
                 "gateway": profile_data.get("gateway", ""), # Gateway from the same profile
                 "router_port": profile_data.get("router_port", ""),
                 "router_protocol": profile_data.get("router_protocol", "http"),
