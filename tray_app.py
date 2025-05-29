@@ -17,7 +17,8 @@ from network_manager import (
     is_wifi_adapter,
     get_available_networks,
     get_wifi_profiles as nm_get_wifi_profiles,
-    get_wifi_password as nm_get_wifi_password
+    get_wifi_password as nm_get_wifi_password,
+    get_adapter_statuses
 )
 from router_browser import open_router_page
 from settings_gui import SettingsGUI
@@ -54,59 +55,51 @@ class TrayApp(QObject):
     def get_pystray_menu(self):
         """Update the tray menu with current configurations and adapter statuses."""
         menu_items = []
+        saved_configs_all = self.db.load_configs()
 
-        # 1. Determine Active Configurations and DHCP Status
-        adapter_statuses = {}
-        saved_configs_all = self.db.load_configs() # Assuming this doesn't fail critically or returns empty on error
+        # Get adapter statuses.
+        # adapter_statuses_map: dict where key is short_name, value is status string.
+        # overall_status_fetch_err: error message if listing/getting config failed within get_adapter_statuses.
+        adapter_statuses_map, overall_status_fetch_err = get_adapter_statuses(saved_configs_all)
 
-        active_adapters, list_err = list_adapters()
-        if list_err:
+        if overall_status_fetch_err:
             if self.icon:
-                self.icon.notify("Adapter Listing Error", list_err, "Network Switcher")
-            # Add an error item to the menu if adapter listing fails
+                self.icon.notify("Adapter Status Error", overall_status_fetch_err, "Network Switcher")
             menu_items.append(
                 pystray.MenuItem(
-                    f"Error listing adapters: {list_err}", action=None, enabled=False
+                    f"Error fetching adapter statuses: {overall_status_fetch_err}", action=None, enabled=False
                 )
             )
+            # If status fetching fails, adapter_statuses_map might be empty.
+            # We might still attempt to list adapters for basic actions if list_adapters() itself works.
 
-        if active_adapters: # Proceed only if adapters were listed
-            for adapter_name in active_adapters:
-                live_config, get_err = get_current_adapter_config(adapter_name)
-                if get_err and not live_config: # Error and no config data
-                    adapter_statuses[adapter_name] = f"Error: {get_err}"
-                    if self.icon: # Notify user about specific adapter error
-                        self.icon.notify(f"Config Error ({adapter_name})", get_err, "Network Switcher")
-                elif live_config:
-                    if live_config.get('dhcp_enabled'):
-                        adapter_statuses[adapter_name] = "DHCP"
-                    else:
-                        status_found = False
-                        for profile_name, saved_profile_data in saved_configs_all.get("networks", {}).items():
-                            if (saved_profile_data.get('adapter_name') == adapter_name and
-                                saved_profile_data.get('ip_address') == live_config.get('ip_address') and
-                                saved_profile_data.get('subnet_mask') == live_config.get('subnet_mask') and
-                                saved_profile_data.get('gateway') == live_config.get('gateway')):
-                                adapter_statuses[adapter_name] = f"Static: {profile_name}"
-                                status_found = True
-                                break
-                        if not status_found:
-                            adapter_statuses[adapter_name] = "Static: (Custom/Unsaved)"
-                else: # No error message but also no live_config (should ideally not happen)
-                    adapter_statuses[adapter_name] = "Status Unknown"
+        # Get (short_name, detailed_name) tuples for menu construction, especially for "Adapter Actions".
+        active_adapters_list_of_tuples, list_adapters_err_separate_call = list_adapters()
+
+        if list_adapters_err_separate_call:
+            # If get_adapter_statuses didn't report an error (or even if it did, this is a more direct check for list_adapters)
+            # and this separate call to list_adapters fails, note it.
+            if self.icon:
+                self.icon.notify("Adapter Listing Error", list_adapters_err_separate_call, "Network Switcher")
+            menu_items.append(
+                pystray.MenuItem(
+                    f"Error listing adapters: {list_adapters_err_separate_call}", action=None, enabled=False
+                )
+            )
+            # active_adapters_list_of_tuples might be empty if this call fails.
 
         # 2. Indicate Active Profile in Main Menu
         for name, profile_data in saved_configs_all.get("networks", {}).items():
-            is_active = any(status == f"Static: {name}" for status in adapter_statuses.values())
+            # Check against the statuses derived from get_adapter_statuses
+            is_active = any(status == f"Static: {name}" for status in adapter_statuses_map.values())
             display_name = f"✔ {name}" if is_active else name
             menu_items.append(pystray.MenuItem(display_name, partial(self._internal_apply_config_handler, name)))
 
-        # --- Wi-Fi Section (unchanged from previous logic regarding active status) ---
+        # --- Wi-Fi Section ---
         if self.wifi_supported:
             wifi_profiles_data, wifi_profiles_msg = self.db.get_wifi_profiles()
             if wifi_profiles_msg and self.icon:
                 self.icon.notify("Wi-Fi Profile Loading Error", wifi_profiles_msg, "Network Switcher")
-
             if wifi_profiles_data:
                 wifi_menu_items = []
                 for profile in wifi_profiles_data:
@@ -128,7 +121,6 @@ class TrayApp(QObject):
                     menu_items.append(
                         pystray.MenuItem("Wi-Fi Profiles", pystray.Menu(*wifi_menu_items))
                     )
-
             networks_data, networks_msg = get_available_networks()
             if networks_msg and self.icon:
                 self.icon.notify("Nearby Wi-Fi Scan Error", networks_msg, "Network Switcher")
@@ -148,21 +140,25 @@ class TrayApp(QObject):
 
         # --- Adapter Actions Section ---
         adapter_actions_menu_items = []
-        if active_adapters: # Only add this section if adapters were successfully listed
-            for adapter in active_adapters:
+        if active_adapters_list_of_tuples: # Proceed if adapter list was successfully retrieved
+            for short_name, detailed_name_or_fallback in active_adapters_list_of_tuples:
                 current_adapter_submenu_items = []
 
                 # 3. Indicate Adapter Status in "Adapter Actions" Submenu
-                status_str = adapter_statuses.get(adapter, "Status Unknown")
+                # Get status from the map populated by get_adapter_statuses
+                status_str = adapter_statuses_map.get(short_name, "Status Unknown")
                 current_adapter_submenu_items.append(pystray.MenuItem(f"Current: {status_str}", action=None, enabled=False))
                 current_adapter_submenu_items.append(pystray.Menu.SEPARATOR)
 
-                action_set_dhcp = partial(self._internal_dhcp, adapter)
-                action_save_current = partial(self._internal_save_current_settings_handler, adapter)
+                # Actions use short_name for internal operations
+                action_set_dhcp = partial(self._internal_dhcp, short_name)
+                action_save_current = partial(self._internal_save_current_settings_handler, short_name)
+
+                # Display uses detailed_name_or_fallback
                 current_adapter_submenu_items.extend([
-                    pystray.MenuItem(f"Set '{adapter}' to DHCP", action_set_dhcp),
+                    pystray.MenuItem(f"Set '{detailed_name_or_fallback}' to DHCP", action_set_dhcp),
                     pystray.MenuItem(
-                        f"Save Current Settings for '{adapter}'", action_save_current
+                        f"Save Current Settings for '{detailed_name_or_fallback}'", action_save_current
                     ),
                 ])
 
@@ -190,9 +186,10 @@ class TrayApp(QObject):
                                 ),
                             )
 
+                # The menu item for the adapter itself uses detailed_name_or_fallback
                 adapter_submenu = pystray.Menu(*current_adapter_submenu_items)
                 adapter_actions_menu_items.append(
-                    pystray.MenuItem(adapter, adapter_submenu)
+                    pystray.MenuItem(detailed_name_or_fallback, adapter_submenu)
                 )
 
         if adapter_actions_menu_items: # If there are any adapter-specific actions

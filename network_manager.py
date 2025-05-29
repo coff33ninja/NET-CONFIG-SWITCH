@@ -531,3 +531,34 @@ def generate_wifi_profile_xml(ssid, password, auth_type):
         {security}
     </MSM>
 </WLANProfile>"""
+
+def get_adapter_statuses(saved_configs):
+    """
+    Fetch the statuses of all active adapters and compare them with saved configurations.
+    Returns a dictionary of adapter statuses and an optional error message.
+    """
+    adapter_statuses = {}
+    active_adapters, list_err = list_adapters()
+    if list_err:
+        return adapter_statuses, list_err
+
+    for short_name, detailed_name in active_adapters:
+        live_config, get_err = get_current_adapter_config(short_name)
+        if get_err and not live_config:
+            adapter_statuses[short_name] = f"Error: {get_err}"
+        elif live_config:
+            if live_config.get('dhcp_enabled'):
+                adapter_statuses[short_name] = "DHCP"
+            else:
+                status_found = False
+                for profile_name, saved_profile_data in saved_configs.get("networks", {}).items():
+                    if (saved_profile_data.get('adapter_name') == short_name and
+                        saved_profile_data.get('ip_address') == live_config.get('ip_address') and
+                        saved_profile_data.get('subnet_mask') == live_config.get('subnet_mask') and
+                        saved_profile_data.get('gateway') == live_config.get('gateway')):
+                        adapter_statuses[short_name] = f"Static: {profile_name}"
+                        status_found = True
+                        break
+                if not status_found:
+                    adapter_statuses[short_name] = "Static: (Custom/Unsaved)"
+    return adapter_statuses, None

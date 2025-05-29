@@ -68,8 +68,10 @@ class SettingsGUI(QMainWindow):
         if adapters_msg:
              QMessageBox.warning(self, "Adapter Info", adapters_msg)
         if adapters_result:
-            self.adapter_combo.addItems(adapters_result)
-            self.adapter_combo.currentTextChanged.connect(self.update_wifi_controls_state)
+            for short_name, detailed_name in adapters_result:
+                self.adapter_combo.addItem(detailed_name, short_name) # Add detailed_name as text, short_name as userData
+            if self.adapter_combo.count() > 0:
+                self.adapter_combo.setCurrentIndex(0)
         else:
             self.adapter_combo.addItem("No adapters found")
             self.adapter_combo.setEnabled(False)
@@ -134,7 +136,8 @@ class SettingsGUI(QMainWindow):
             self.wifi_scroll_area.setWidget(wifi_widget_container)
             main_layout.addWidget(self.wifi_scroll_area)
 
-            self.update_wifi_controls_state()
+        # Connect signal after adapter_combo is populated
+        self.adapter_combo.currentIndexChanged.connect(self.update_wifi_controls_state) # Use currentIndexChanged or currentTextChanged
 
         # --- Main Action Buttons Section ---
         main_action_buttons_layout = QHBoxLayout()
@@ -191,6 +194,9 @@ class SettingsGUI(QMainWindow):
 
         self.update_config_list()
         self.setCentralWidget(main_container)
+        # Initial call to set Wi-Fi controls state based on default adapter selection
+        if self.wifi_supported:
+            self.update_wifi_controls_state()
 
     def add_wifi_section_content(self, wifi_main_layout):
         wifi_label = QLabel("Wi-Fi Settings:")
@@ -437,7 +443,7 @@ class SettingsGUI(QMainWindow):
 
     def apply_wifi(self):
         try:
-            adapter_name = self.adapter_combo.currentText()
+            adapter_name = self.adapter_combo.currentData() # Use short_name from userData
             if not adapter_name or adapter_name == "No adapters found":
                 self.status_bar.showMessage("Apply Wi-Fi failed: No adapter selected.", 5000)
                 QMessageBox.critical(self, "Selection Error", "No network adapter selected or available.")
@@ -511,12 +517,15 @@ class SettingsGUI(QMainWindow):
 
     def update_adapters(self):
         self.adapter_combo.clear()
-        adapters, message = list_adapters()
+        adapters_result, message = list_adapters() # list_adapters returns list of tuples
         if message:
             self.status_bar.showMessage(f"Adapter update: {message}", 5000)
             QMessageBox.warning(self, "Adapter Info", message)
-        if adapters:
-            self.adapter_combo.addItems(adapters)
+
+        if adapters_result:
+            for short_name, detailed_name in adapters_result:
+                self.adapter_combo.addItem(detailed_name, short_name) # Add detailed_name as text, short_name as userData
+
             if self.adapter_combo.count() > 0:
                  self.adapter_combo.setCurrentIndex(0)
         else:
@@ -555,7 +564,18 @@ class SettingsGUI(QMainWindow):
             self.router_ip.setText(config.get("router_ip", ""))
             self.router_port.setText(config.get("router_port", ""))
             self.router_protocol_combo.setCurrentText(config.get("router_protocol", "http"))
-            self.adapter_combo.setCurrentText(config.get("adapter_name", ""))
+
+            # Set adapter_combo based on short_name stored in config
+            adapter_short_name_from_config = config.get("adapter_name", "")
+            if adapter_short_name_from_config:
+                for i in range(self.adapter_combo.count()):
+                    if self.adapter_combo.itemData(i) == adapter_short_name_from_config:
+                        self.adapter_combo.setCurrentIndex(i)
+                        break
+                else: # Adapter short_name from config not found in combo
+                    print(f"Warning: Adapter '{adapter_short_name_from_config}' from saved config not found in current adapter list.")
+                    if self.adapter_combo.count() > 0: self.adapter_combo.setCurrentIndex(0) # Fallback
+
             self.open_router.setChecked(config.get("open_router", False))
 
             self._loading_config = True
@@ -624,7 +644,7 @@ class SettingsGUI(QMainWindow):
                 return
 
             config_data = { # Renamed from config to config_data
-                "adapter_name": self.adapter_combo.currentText(),
+                "adapter_name": self.adapter_combo.currentData(), # Store short_name
                 "ip_address": self.ip_address.text(),
                 "subnet_mask": self.subnet_mask.text(),
                 "gateway": self.gateway.text(),
@@ -702,16 +722,17 @@ class SettingsGUI(QMainWindow):
                 self.nearby_networks_combo.setCurrentText("None")
         self.status_bar.showMessage("Input fields cleared.", 3000)
 
-    def update_wifi_controls_state(self, adapter_name=None):
+    def update_wifi_controls_state(self, _index_or_text_from_signal=None): # Parameter can be ignored
         if not self.wifi_supported:
             if hasattr(self, 'wifi_scroll_area'): self.wifi_scroll_area.setEnabled(False)
             return
 
-        current_adapter_name = adapter_name if adapter_name is not None else self.adapter_combo.currentText()
+        # Get the short_name from currentData
+        current_adapter_short_name = self.adapter_combo.currentData()
 
         is_selected_adapter_wifi = False
-        if current_adapter_name and current_adapter_name != "No adapters found":
-            is_selected_adapter_wifi = is_wifi_adapter(current_adapter_name)
+        if current_adapter_short_name: # Ensure it's not None (e.g. for "No adapters found" item)
+            is_selected_adapter_wifi = is_wifi_adapter(current_adapter_short_name)
 
         if hasattr(self, 'wifi_scroll_area'):
             self.wifi_scroll_area.setEnabled(is_selected_adapter_wifi)
@@ -719,8 +740,18 @@ class SettingsGUI(QMainWindow):
     def populate_for_new_save(self, config_data, suggested_name):
         self.clear_fields()
         self.config_name.setText(suggested_name)
-        if config_data.get("adapter_name"):
-            self.adapter_combo.setCurrentText(config_data["adapter_name"])
+
+        # config_data["adapter_name"] from get_current_adapter_config is the short_name
+        adapter_short_name_to_set = config_data.get("adapter_name")
+        if adapter_short_name_to_set:
+            for i in range(self.adapter_combo.count()):
+                if self.adapter_combo.itemData(i) == adapter_short_name_to_set:
+                    self.adapter_combo.setCurrentIndex(i)
+                    break
+            else:
+                 print(f"Warning: Current adapter '{adapter_short_name_to_set}' not found in combo list during populate_for_new_save.")
+                 if self.adapter_combo.count() > 0: self.adapter_combo.setCurrentIndex(0) # Fallback
+
         self.ip_address.setText(config_data.get("ip_address", ""))
         self.subnet_mask.setText(config_data.get("subnet_mask", ""))
         self.gateway.setText(config_data.get("gateway", ""))
