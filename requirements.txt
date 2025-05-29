@@ -1,0 +1,7 @@
+PyQt6
+pystray
+pillow
+keyring
+PyQt6-WebEngine
+pyinstaller
+cryptography
