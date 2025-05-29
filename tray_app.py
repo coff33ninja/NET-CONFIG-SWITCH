@@ -1,7 +1,7 @@
 import pystray
 from PIL import Image
 import sys
-from PyQt6.QtWidgets import QApplication
+from PyQt6.QtWidgets import QApplication, QMessageBox # Added QMessageBox
 from PyQt6.QtCore import QObject, pyqtSignal
 import threading
 from functools import partial
@@ -14,8 +14,10 @@ from network_manager import (
     set_adapter_to_dhcp,
     apply_wifi_profile,
     has_wifi_support,
-    is_wifi_adapter, # Import is_wifi_adapter
+    is_wifi_adapter,
     get_available_networks,
+    get_wifi_profiles as nm_get_wifi_profiles,
+    get_wifi_password as nm_get_wifi_password
 )
 from router_browser import open_router_page
 from settings_gui import SettingsGUI
@@ -29,7 +31,7 @@ class TrayApp(QObject):
     show_settings_signal = pyqtSignal()
     prepare_settings_for_save_current_signal = pyqtSignal(str)
     request_tray_menu_refresh_signal = pyqtSignal()
-    open_router_signal = pyqtSignal(str, str, str, int, str) # Added protocol
+    open_router_signal = pyqtSignal(str, str, str, int, str)
 
     def __init__(self):
         super().__init__()
@@ -50,19 +52,60 @@ class TrayApp(QObject):
         self._request_save_current_settings(adapter_name)
 
     def get_pystray_menu(self):
-        """Update the tray menu with current configurations."""
-        configs = self.db.load_configs()
-        menu_items = [
-            pystray.MenuItem(name, partial(self._internal_apply_config_handler, name))
-            for name in configs["networks"]
-        ]
+        """Update the tray menu with current configurations and adapter statuses."""
+        menu_items = []
 
-        # Wi-Fi profiles (conditional)
+        # 1. Determine Active Configurations and DHCP Status
+        adapter_statuses = {}
+        saved_configs_all = self.db.load_configs() # Assuming this doesn't fail critically or returns empty on error
+
+        active_adapters, list_err = list_adapters()
+        if list_err:
+            if self.icon:
+                self.icon.notify("Adapter Listing Error", list_err, "Network Switcher")
+            # Add an error item to the menu if adapter listing fails
+            menu_items.append(pystray.MenuItem(f"Error listing adapters: {list_err}", enabled=False))
+
+        if active_adapters: # Proceed only if adapters were listed
+            for adapter_name in active_adapters:
+                live_config, get_err = get_current_adapter_config(adapter_name)
+                if get_err and not live_config: # Error and no config data
+                    adapter_statuses[adapter_name] = f"Error: {get_err}"
+                    if self.icon: # Notify user about specific adapter error
+                         self.icon.notify(f"Config Error ({adapter_name})", get_err, "Network Switcher")
+                elif live_config:
+                    if live_config.get('dhcp_enabled'):
+                        adapter_statuses[adapter_name] = "DHCP"
+                    else:
+                        status_found = False
+                        for profile_name, saved_profile_data in saved_configs_all.get("networks", {}).items():
+                            if (saved_profile_data.get('adapter_name') == adapter_name and
+                                saved_profile_data.get('ip_address') == live_config.get('ip_address') and
+                                saved_profile_data.get('subnet_mask') == live_config.get('subnet_mask') and
+                                saved_profile_data.get('gateway') == live_config.get('gateway')):
+                                adapter_statuses[adapter_name] = f"Static: {profile_name}"
+                                status_found = True
+                                break
+                        if not status_found:
+                            adapter_statuses[adapter_name] = "Static: (Custom/Unsaved)"
+                else: # No error message but also no live_config (should ideally not happen)
+                    adapter_statuses[adapter_name] = "Status Unknown"
+
+        # 2. Indicate Active Profile in Main Menu
+        for name, profile_data in saved_configs_all.get("networks", {}).items():
+            is_active = any(status == f"Static: {name}" for status in adapter_statuses.values())
+            display_name = f"✔ {name}" if is_active else name
+            menu_items.append(pystray.MenuItem(display_name, partial(self._internal_apply_config_handler, name)))
+
+        # --- Wi-Fi Section (unchanged from previous logic regarding active status) ---
         if self.wifi_supported:
-            wifi_profiles = self.db.get_wifi_profiles()
-            if wifi_profiles:
+            wifi_profiles_data, wifi_profiles_msg = self.db.get_wifi_profiles()
+            if wifi_profiles_msg and self.icon:
+                self.icon.notify("Wi-Fi Profile Loading Error", wifi_profiles_msg, "Network Switcher")
+
+            if wifi_profiles_data:
                 wifi_menu_items = []
-                for profile in wifi_profiles:
+                for profile in wifi_profiles_data:
                     config_name, ssid, password, auth_type = profile
                     wifi_menu_items.append(
                         pystray.MenuItem(
@@ -76,75 +119,86 @@ class TrayApp(QObject):
                             ),
                         )
                     )
-                menu_items.append(pystray.Menu.SEPARATOR)
-                menu_items.append(
-                    pystray.MenuItem("Wi-Fi Profiles", pystray.Menu(*wifi_menu_items))
-                )
+                if wifi_menu_items:
+                    menu_items.append(pystray.Menu.SEPARATOR)
+                    menu_items.append(
+                        pystray.MenuItem("Wi-Fi Profiles", pystray.Menu(*wifi_menu_items))
+                    )
 
-            # Nearby networks
-            networks = get_available_networks()
-            if networks:
+            networks_data, networks_msg = get_available_networks()
+            if networks_msg and self.icon:
+                self.icon.notify("Nearby Wi-Fi Scan Error", networks_msg, "Network Switcher")
+
+            if networks_data:
                 nearby_menu_items = []
-                for ssid, auth_type, signal in networks:
+                for ssid, auth_type, signal in networks_data:
                     nearby_menu_items.append(
                         pystray.MenuItem(
                             f"{ssid} ({auth_type}, {signal})",
                             partial(self._internal_connect_nearby_network, ssid, auth_type),
                         )
                     )
-                menu_items.append(
-                    pystray.MenuItem("Nearby Networks", pystray.Menu(*nearby_menu_items)))
+                if nearby_menu_items:
+                    menu_items.append(
+                        pystray.MenuItem("Nearby Networks", pystray.Menu(*nearby_menu_items)))
 
-        # Adapter-specific actions
-        adapter_menu = []
-        active_adapters = list_adapters()
-        for adapter in active_adapters:
-            action_set_dhcp = partial(self._internal_dhcp, adapter)
-            action_save_current = partial(self._internal_save_current_settings_handler, adapter)
-            current_adapter_menu_items = [
-                pystray.MenuItem(f"Set '{adapter}' to DHCP", action_set_dhcp),
-                pystray.MenuItem(
-                    f"Save Current Settings for '{adapter}'", action_save_current
-                ),
-            ]
-            current_adapter_settings = get_current_adapter_config(adapter)
-            saved_configs = self.db.load_configs().get("networks", {})
-            for config_name, config in saved_configs.items():
-                if (
-                    config.get("adapter_name") == adapter
-                    and config.get("ip_address") == current_adapter_settings.get("ip_address")
-                    and config.get("gateway") == current_adapter_settings.get("gateway")
-                    and config.get("router_ip")
-                ):
-                    action_open_router = partial(
-                        self._internal_open_router_handler,
-                        config.get("router_ip", ""),
-                        config.get("gateway", ""),
-                        config.get("router_port", ""),
-                        config.get("router_refresh_interval", 5),
-                        config.get("router_protocol", "http"),
-                    )
-                    current_adapter_menu_items.insert(0, pystray.Menu.SEPARATOR)
-                    current_adapter_menu_items.insert(
-                        0,
-                        pystray.MenuItem(
-                            f"Open Router (Active: {config_name})",
-                            action_open_router,
-                        ),
-                    )
-                    break
-            adapter_submenu = pystray.Menu(*current_adapter_menu_items)
-            adapter_menu.append(
-                pystray.MenuItem(adapter, adapter_submenu)
-            )
+        # --- Adapter Actions Section ---
+        adapter_actions_menu_items = []
+        if active_adapters: # Only add this section if adapters were successfully listed
+            for adapter in active_adapters:
+                current_adapter_submenu_items = []
 
-        if adapter_menu:
+                # 3. Indicate Adapter Status in "Adapter Actions" Submenu
+                status_str = adapter_statuses.get(adapter, "Status Unknown")
+                current_adapter_submenu_items.append(pystray.MenuItem(f"Current: {status_str}", action=None, enabled=False))
+                current_adapter_submenu_items.append(pystray.Menu.SEPARATOR)
+
+                action_set_dhcp = partial(self._internal_dhcp, adapter)
+                action_save_current = partial(self._internal_save_current_settings_handler, adapter)
+                current_adapter_submenu_items.extend([
+                    pystray.MenuItem(f"Set '{adapter}' to DHCP", action_set_dhcp),
+                    pystray.MenuItem(
+                        f"Save Current Settings for '{adapter}'", action_save_current
+                    ),
+                ])
+
+                # Logic for "Open Router" based on active config for *this* adapter
+                # This part needs to use the specific status determined for *this* adapter
+                if status_str.startswith("Static: "):
+                    active_profile_name_for_adapter = status_str.replace("Static: ", "")
+                    if active_profile_name_for_adapter != "(Custom/Unsaved)":
+                        active_profile_details = saved_configs_all.get("networks", {}).get(active_profile_name_for_adapter)
+                        if active_profile_details and active_profile_details.get("router_ip"):
+                            action_open_router = partial(
+                                self._internal_open_router_handler,
+                                active_profile_details.get("router_ip", ""),
+                                active_profile_details.get("gateway", ""), # Gateway from saved profile
+                                active_profile_details.get("router_port", ""),
+                                active_profile_details.get("router_refresh_interval", 5),
+                                active_profile_details.get("router_protocol", "http"),
+                            )
+                            current_adapter_submenu_items.insert(2, pystray.Menu.SEPARATOR) # Insert before DHCP/Save
+                            current_adapter_submenu_items.insert(
+                                2, # Insert before DHCP/Save
+                                pystray.MenuItem(
+                                    f"Open Router ({active_profile_name_for_adapter})",
+                                    action_open_router,
+                                ),
+                            )
+
+                adapter_submenu = pystray.Menu(*current_adapter_submenu_items)
+                adapter_actions_menu_items.append(
+                    pystray.MenuItem(adapter, adapter_submenu)
+                )
+
+        if adapter_actions_menu_items: # If there are any adapter-specific actions
             menu_items.append(pystray.Menu.SEPARATOR)
             menu_items.append(
                 pystray.MenuItem(
-                    "Adapter Actions", pystray.Menu(*adapter_menu)
+                    "Adapter Actions", pystray.Menu(*adapter_actions_menu_items)
                 )
             )
+
         menu_items.append(pystray.Menu.SEPARATOR)
         menu_items.append(pystray.MenuItem("Settings", self._request_open_settings))
         menu_items.append(pystray.MenuItem("Exit", self._request_exit_app))
@@ -201,8 +255,6 @@ class TrayApp(QObject):
 
     def _internal_dhcp(self, adapter_name, icon, item):
         self._request_set_adapter_to_dhcp(adapter_name)
-        # Removed: self._request_save_current_settings(adapter_name)
-        # Setting to DHCP is a distinct action from saving settings.
 
     def _internal_apply_wifi_handler(
         self, config_name, ssid, password, auth_type, icon, item
@@ -217,99 +269,87 @@ class TrayApp(QObject):
     def _internal_connect_nearby_network(self, network_ssid, auth_type, icon, item):
         """Open settings GUI to input password for a nearby network."""
         self.show_settings_signal.emit()
-        if self.settings_window:
+        QApplication.processEvents()
+        if self.settings_window and self.settings_window.isVisible():
             self.settings_window.wifi_ssid.setText(network_ssid)
             self.settings_window.auth_type_combo.setCurrentText(auth_type)
-            # The rest of the logic for connecting will be handled by the SettingsGUI
-            # after the user inputs a password (if required) and clicks an apply button there.
+            self.settings_window.wifi_password.setFocus()
+            QMessageBox.information(self.settings_window, "Nearby Network Selected",
+                                    f"'{network_ssid}' selected. Please enter password if required and click 'Apply Wi-Fi Profile'.")
+        elif self.icon:
+            self.icon.notify("Settings window not available for nearby network connection.", "Error", "Network Switcher")
+
 
     def _internal_apply_config_task(self, config_name):
         configs = self.db.load_configs()
-        if not configs or not configs.get("networks") or config_name not in configs.get("networks"):
+        network_configs = configs.get("networks", {})
+
+        if config_name not in network_configs:
             if self.icon:
                 self.icon.notify(
                     f"Configuration '{config_name}' not found.", "Error", "Network Switcher"
                 )
             return
-        config = configs["networks"][config_name] # Corrected access
-        success = apply_network_config(config["adapter_name"], config)
+
+        config_to_apply = network_configs[config_name]
+        success, message = apply_network_config(config_to_apply["adapter_name"], config_to_apply)
+
+        title = "Success" if success else "Error"
+        full_title = f"Network Switcher - {title}"
+
+        if self.icon:
+            self.icon.notify(message, full_title)
+
         if success:
-            if self.icon:
-                self.icon.notify(
-                    f"Applied configuration: {config_name}", "Network Switcher", "Success"
-                )
-            if config.get("open_router"):
+            if config_to_apply.get("open_router"):
                 self.open_router_signal.emit(
-                    config.get("router_ip", ""),
-                    config.get("gateway", ""),
-                    config.get("router_port", ""),
-                    config.get("router_refresh_interval", 5), # Corrected refresh interval
-                    config.get("router_protocol", "http"),
+                    config_to_apply.get("router_ip", ""),
+                    config_to_apply.get("gateway", ""),
+                    config_to_apply.get("router_port", ""),
+                    config_to_apply.get("router_refresh_interval", 5),
+                    config_to_apply.get("router_protocol", "http"),
                 )
-            if self.wifi_supported:
-                # Check for associated Wi-Fi profiles for this specific network config
-                # This part might need more specific logic if a config can have multiple Wi-Fi profiles
-                # For now, assuming we might apply the first one if present.
-                # Or, this Wi-Fi application logic might be better handled if explicitly tied.
-                # For simplicity, if a static config is applied, and it has an associated Wi-Fi profile,
-                # it might be desirable to also attempt to connect to that Wi-Fi.
-                # This depends on the intended application flow.
-                # Example:
-                # wifi_profiles_for_config = self.db.get_wifi_profiles(config_name=config_name)
-                # if wifi_profiles_for_config:
-                #     # Assuming you want to apply the first associated Wi-Fi profile
-                #     profile_data = wifi_profiles_for_config[0] # ssid, password, auth_type
-                #     apply_wifi_profile(
-                #         profile_data[0], # ssid
-                #         profile_data[1], # password
-                #         config["adapter_name"],
-                #         profile_data[2]  # auth_type
-                #     )
-                pass # Re-evaluate Wi-Fi application logic here if needed for static configs
             self.request_tray_menu_refresh_signal.emit()
-        else:
-            if self.icon:
-                self.icon.notify(
-                    f"Failed to apply configuration: {config_name}", "Error", "Network Switcher"
-                )
+
 
     def _execute_set_dhcp_task(self, adapter_name):
-        success = set_adapter_to_dhcp(adapter_name)
+        success, message = set_adapter_to_dhcp(adapter_name)
+        title = "Success" if success else "Error"
+        full_title = f"Network Switcher - {title}"
+
+        if self.icon:
+            self.icon.notify(message, full_title)
+
         if success:
-            if self.icon:
-                self.icon.notify(
-                    f"Adapter '{adapter_name}' set to DHCP.", "Network Switcher", "Success"
-                )
             self.request_tray_menu_refresh_signal.emit()
-        else:
-            if self.icon:
-                self.icon.notify(
-                    f"Failed to set '{adapter_name}' to DHCP.", "Network Switcher", "Error"
-                )
+
 
     def _execute_wifi_task(self, config_name, ssid, password, auth_type):
-        # For applying a Wi-Fi profile, we should use an actual Wi-Fi adapter.
-        # The config_name here is the one associated with the Wi-Fi profile,
-        # not necessarily indicative of the adapter to use for Wi-Fi.
-        all_system_adapters = list_adapters()
+        all_system_adapters, list_err = list_adapters()
+        if list_err: # Handle error from list_adapters
+            if self.icon:
+                self.icon.notify(f"Wi-Fi apply error: Could not list adapters. {list_err}", "Network Switcher - Wi-Fi Error")
+            return
+
         wifi_adapters_present = [name for name in all_system_adapters if is_wifi_adapter(name)]
 
         if not wifi_adapters_present:
             if self.icon:
-                self.icon.notify("No Wi-Fi adapter found on the system to apply the profile.", "Network Switcher Error", "Error")
+                self.icon.notify("No Wi-Fi adapter found on the system to apply the profile.", "Network Switcher - Wi-Fi Error")
             return
 
-        adapter_to_use_for_wifi = wifi_adapters_present[0] # Use the first available Wi-Fi adapter
+        adapter_to_use_for_wifi = wifi_adapters_present[0]
 
-        if apply_wifi_profile(ssid, password, adapter_to_use_for_wifi, auth_type):
-            if self.icon:
-                self.icon.notify(
-                    f"Connected to Wi-Fi '{ssid}'.", "Network Switcher", "Success"
-                )
-        else:
-            if self.icon:
-                self.icon.notify(
-                    f"Failed to connect to Wi-Fi '{ssid}'.", "Network Switcher", "Error")
+        success, message = apply_wifi_profile(ssid, password, adapter_to_use_for_wifi, auth_type)
+        title = "Success" if success else "Error"
+        full_title = f"Network Switcher - {title}"
+
+        if self.icon:
+            self.icon.notify(message, full_title)
+
+        if success:
+            self.request_tray_menu_refresh_signal.emit()
+
 
     def _slot_run_settings_gui(self):
         if not self.settings_window or not self.settings_window.isVisible():
@@ -317,23 +357,33 @@ class TrayApp(QObject):
             self.settings_window.show()
         else:
             self.settings_window.activateWindow()
-            self.settings_window.show()
+            self.settings_window.showNormal()
+
 
     def _slot_prepare_settings_for_save_current(self, adapter_name):
-        current_config_data = get_current_adapter_config(adapter_name)
+        current_config_data, msg = get_current_adapter_config(adapter_name)
+
         if not current_config_data:
+            error_details = msg if msg else "No details provided."
             if self.icon:
-                self.icon.notify(
-                    f"Could not retrieve current settings for {adapter_name}.", "Error")
+                self.icon.notify(f"Could not retrieve current settings for {adapter_name}: {error_details}", "Error", "Network Switcher")
             return
+
         if not self.settings_window or not self.settings_window.isVisible():
             self.settings_window = SettingsGUI(self)
             self.settings_window.show()
         else:
             self.settings_window.activateWindow()
+            self.settings_window.showNormal()
+
+        current_ip = current_config_data.get('ip_address')
+        current_ip_str = current_ip if current_ip else "NoIP"
+
         suggested_name = (
-            f"{adapter_name}--current--{datetime.now().strftime('%Y%m%d-%H%M%S')}"
+            f"{adapter_name} - {current_ip_str} - {datetime.now().strftime('%Y%m%d-%H%M%S')}"
         )
+
+        QApplication.processEvents()
         self.settings_window.populate_for_new_save(current_config_data, suggested_name)
 
     def _slot_open_router_page(
@@ -344,7 +394,7 @@ class TrayApp(QObject):
         )
         if browser:
             self.router_windows.append(browser)
-            self.router_windows = [w for w in self.router_windows if w.isVisible()] # Corrected variable name and method
+            self.router_windows = [w for w in self.router_windows if w.isVisible()]
 
     def update_tray_menu(self):
         if self.icon:
