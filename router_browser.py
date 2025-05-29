@@ -19,12 +19,12 @@ from datetime import datetime
 class RouterBrowser(QMainWindow):
     """Custom browser for router login with navigation, credentials, and HTTPS support."""
 
-    def __init__(self, router_ip, gateway, router_port=None, refresh_interval=5000, preferred_protocol="http"):
+    def __init__(self, router_ip, router_port=None, refresh_interval=5000, preferred_protocol="http"):
         super().__init__()
-        if not router_ip and not gateway: # Ensure at least one is provided
-            raise ValueError("Router IP or gateway must be provided for RouterBrowser.")
+        if not router_ip: # Ensure router_ip is provided
+            raise ValueError("Router IP must be provided for RouterBrowser.")
 
-        self.target_ip = router_ip or gateway
+        self.target_ip = router_ip # Use router_ip directly
         self.router_port = router_port
         self.current_protocol_is_https = (preferred_protocol.lower() == "https")
         self.refresh_interval = refresh_interval
@@ -453,17 +453,17 @@ class RouterBrowser(QMainWindow):
         self.raise_()
 
 
-def open_router_page(router_ip, gateway, router_port=None, refresh_interval=5, protocol="http"):
+def open_router_page(router_ip, router_port=None, refresh_interval=5, protocol="http"):
     """Open the router login page in a custom browser."""
     if not QApplication.instance():
         QApplication(sys.argv)
 
-    if not router_ip and not gateway:
-        QMessageBox.critical(None, "Error", "No router IP or gateway provided.")
-        print("Error: No router IP or gateway provided.")
+    if not router_ip: # Check only for router_ip
+        QMessageBox.critical(None, "Error", "No router IP provided.")
+        print("Error: No router IP provided.")
         return None
     try:
-        browser = RouterBrowser(router_ip, gateway, router_port, refresh_interval * 1000, preferred_protocol=protocol)
+        browser = RouterBrowser(router_ip, router_port, refresh_interval * 1000, preferred_protocol=protocol)
         browser.show()
         return browser
     except ValueError as e:

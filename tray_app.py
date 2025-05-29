@@ -30,7 +30,7 @@ class TrayApp(QObject):
     show_settings_signal = pyqtSignal()
     prepare_settings_for_save_current_signal = pyqtSignal(str)
     request_tray_menu_refresh_signal = pyqtSignal()
-    open_router_signal = pyqtSignal(str, str, str, int, str)
+    open_router_signal = pyqtSignal(str, str, int, str) # router_ip, port, interval, protocol
 
     def __init__(self):
         super().__init__()
@@ -170,14 +170,13 @@ class TrayApp(QObject):
                 if profile_name and profile_name != "(Custom/Unsaved)":
                     router_config_details = self.db.get_router_config_for_profile(profile_name)
                     if router_config_details:
-                        router_ip = router_config_details.get("router_ip") or router_config_details.get("gateway")
+                        router_ip = router_config_details.get("router_ip") # This will exist if details are returned
                         router_port = router_config_details.get("router_port")
                         refresh_interval = router_config_details.get("router_refresh_interval", 5)
                         protocol = router_config_details.get("router_protocol", "http")
                         open_router_action = partial(
                             self._internal_open_router_handler,
                             router_ip,
-                            router_config_details.get("gateway"),
                             router_port,
                             refresh_interval,
                             protocol,
@@ -250,11 +249,9 @@ class TrayApp(QObject):
         self._request_apply_config(config_name)
 
     def _internal_open_router_handler(
-        self, router_ip, gateway_ip, router_port, refresh_interval, protocol, icon=None, item=None
+        self, router_ip, router_port, refresh_interval, protocol, icon=None, item=None
     ):
-        self.open_router_signal.emit(
-            router_ip, gateway_ip, router_port, refresh_interval, protocol
-        )
+        self.open_router_signal.emit(router_ip, router_port, refresh_interval, protocol)
 
     def _internal_dhcp(self, adapter_name, icon=None, item=None):
         self._request_set_adapter_to_dhcp(adapter_name)
@@ -303,13 +300,14 @@ class TrayApp(QObject):
 
         if success:
             if config_to_apply.get("open_router"):
-                self.open_router_signal.emit(
-                    config_to_apply.get("router_ip", ""), # router_ip from the applied config
-                    config_to_apply.get("gateway", ""),   # gateway from the applied config
-                    config_to_apply.get("router_port", ""), # router_port from the applied config
-                    config_to_apply.get("router_refresh_interval", 5), # refresh_interval from applied config
-                    config_to_apply.get("router_protocol", "http") # protocol from applied config
-                )
+                router_ip_to_open = config_to_apply.get("router_ip")
+                if router_ip_to_open: # Only open if router_ip is set
+                    self.open_router_signal.emit(
+                        router_ip_to_open,
+                        config_to_apply.get("router_port", ""),
+                        config_to_apply.get("router_refresh_interval", 5),
+                        config_to_apply.get("router_protocol", "http")
+                    )
             self.request_tray_menu_refresh_signal.emit()
 
     def _execute_set_dhcp_task(self, adapter_name):
@@ -381,11 +379,9 @@ class TrayApp(QObject):
         self.settings_window.populate_for_new_save(current_config_data, suggested_name)
 
     def _slot_open_router_page(
-        self, router_ip, gateway_ip, router_port, refresh_interval, protocol
+        self, router_ip, router_port, refresh_interval, protocol
     ):
-        browser = open_router_page(
-            router_ip, gateway_ip, router_port, refresh_interval, protocol
-        )
+        browser = open_router_page(router_ip, router_port, refresh_interval, protocol)
         if browser:
             self.router_windows.append(browser)
             self.router_windows = [w for w in self.router_windows if w.isVisible()]
