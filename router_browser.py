@@ -1,19 +1,18 @@
 import sys
 import os
 from PyQt6.QtWidgets import (
-    QApplication, QMainWindow, QVBoxLayout, QHBoxLayout, QWidget, QPushButton,
-    QLineEdit, QInputDialog, QMessageBox, QMenu, QComboBox, QLabel, QStatusBar
+    QApplication, QMainWindow, QVBoxLayout, QHBoxLayout, QWidget, QPushButton, QLineEdit,
+    QInputDialog, QMessageBox, QMenu, QLabel, QStatusBar
 )
 from PyQt6.QtWebEngineWidgets import QWebEngineView
 from PyQt6.QtWebEngineCore import QWebEngineSettings, QWebEngineProfile, QWebEnginePage
 from PyQt6.QtCore import QUrl, QTimer, QDir
 from PyQt6.QtGui import QPixmap
-from urllib.parse import urlparse
 from PyQt6.QtGui import QAction
 import socket
 import keyring
 from db_manager import DBManager
-from network_manager import get_current_adapter_config # Assuming this returns (config, msg)
+from network_manager import get_current_adapter_config, list_adapters # Import list_adapters
 from datetime import datetime
 
 
@@ -53,12 +52,11 @@ class RouterBrowser(QMainWindow):
             os.getcwd(), "cookies", self.target_ip.replace(".", "_")
         )
         QDir().mkpath(self.cookie_dir)
-
         self.profile = QWebEngineProfile(f"Router_{self.target_ip}", self)
         self.profile.setPersistentStoragePath(self.cookie_dir)
-        self.profile.settings().setAttribute(
-            QWebEngineSettings.WebAttribute.ShowScrollBars, True
-        )
+        settings = self.profile.settings()
+        if settings:
+            settings.setAttribute(QWebEngineSettings.WebAttribute.ShowScrollBars, True)
 
     def build_url(self, force_https=None):
         """Build the target URL with protocol and port."""
@@ -307,7 +305,11 @@ class RouterBrowser(QMainWindow):
             passField.value = "{password}";
         }}
         """
-        self.web_view.page().runJavaScript(js)
+        page = self.web_view.page()
+        if page is not None:
+            page.runJavaScript(js)
+        else:
+            print("Warning: Web page is not available to run JavaScript for credentials.")
 
     def prompt_save_credentials(self):
         """Prompt to save login credentials."""
@@ -322,9 +324,12 @@ class RouterBrowser(QMainWindow):
             return ['', ''];
         }})();
         """
-        self.web_view.page().runJavaScript(
-            js, lambda result: self.save_credentials(result)
-        )
+        # Check if page exists before calling runJavaScript
+        page = self.web_view.page()
+        if page:
+            page.runJavaScript(js, lambda result: self.save_credentials(result))
+        else:
+            print(f"Warning: Web page not available for {self.target_ip} to run JavaScript for credentials.")
 
     def save_credentials(self, result):
         """Save credentials to keyring."""
@@ -346,11 +351,12 @@ class RouterBrowser(QMainWindow):
                 self.credentials.append((username, password))
                 print(f"Saved credentials for {self.target_ip}")
                 self.status_bar.showMessage(f"Credentials for {username} saved.", 5000)
-
-
     def refresh_to_original(self):
         """Refresh the browser to the original IP."""
         url_to_load = self.build_url()
+        # Ensure URL bar is updated before loading, in case build_url changed protocol
+        if self.url_bar:
+            self.url_bar.setText(url_to_load)
         self.web_view.load(QUrl(url_to_load))
         print(f"Refreshed to {url_to_load}")
         self.status_bar.showMessage(f"Reloading {url_to_load}", 3000)
@@ -420,21 +426,22 @@ class RouterBrowser(QMainWindow):
 
     def update_network_status(self):
         """Update the network status in the status bar."""
-        active_adapters_list, msg = list_adapters()
+        active_adapters_tuples, msg = list_adapters() # list_adapters returns list of tuples
         if msg:
             self.network_status_label.setText(f"Network Status: Error listing adapters - {msg}")
             return
 
         status_text = "Network Status: Unknown or No Active Configured Connection"
-        if active_adapters_list:
-            for adapter_name in active_adapters_list:
-                config, config_msg = get_current_adapter_config(adapter_name)
+        if active_adapters_tuples:
+            for adapter_short_name, adapter_detailed_name in active_adapters_tuples:
+                # Use adapter_short_name for get_current_adapter_config
+                config, config_msg = get_current_adapter_config(adapter_short_name)
                 if config_msg and not config:
-                    print(f"Could not get config for {adapter_name}: {config_msg}")
+                    print(f"Could not get config for {adapter_short_name} ({adapter_detailed_name}): {config_msg}")
                     continue
-
                 if config and config.get('ip_address') and config.get('gateway'):
-                    status_text = f"Adapter: {adapter_name} | IP: {config.get('ip_address', 'N/A')} | Gateway: {config.get('gateway', 'N/A')}"
+                    # Display adapter_detailed_name for user-friendliness
+                    status_text = f"Adapter: {adapter_detailed_name} | IP: {config.get('ip_address', 'N/A')} | Gateway: {config.get('gateway', 'N/A')}"
                     break
         self.network_status_label.setText(status_text)
 
