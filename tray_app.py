@@ -16,8 +16,8 @@ from network_manager import (
     has_wifi_support,
     is_wifi_adapter,
     get_available_networks,
-    get_wifi_profiles as nm_get_wifi_profiles,
-    get_wifi_password as nm_get_wifi_password
+    get_wifi_profiles as get_wifi_profiles,
+    get_wifi_password as get_wifi_password
 )
 from router_browser import open_router_page
 from settings_gui import SettingsGUI
@@ -62,9 +62,9 @@ class TrayApp(QObject):
         active_adapters, list_err = list_adapters()
         if list_err:
             if self.icon:
-                self.icon.notify("Adapter Listing Error", list_err, "Network Switcher")
+                self.icon.notify(list_err, "Adapter Listing Error")
             # Add an error item to the menu if adapter listing fails
-            menu_items.append(pystray.MenuItem(f"Error listing adapters: {list_err}", enabled=False))
+            menu_items.append(pystray.MenuItem(f"Error listing adapters: {list_err}", None, enabled=False))
 
         if active_adapters: # Proceed only if adapters were listed
             for adapter_name in active_adapters:
@@ -72,7 +72,7 @@ class TrayApp(QObject):
                 if get_err and not live_config: # Error and no config data
                     adapter_statuses[adapter_name] = f"Error: {get_err}"
                     if self.icon: # Notify user about specific adapter error
-                         self.icon.notify(f"Config Error ({adapter_name})", get_err, "Network Switcher")
+                         self.icon.notify(get_err, f"Config Error ({adapter_name})")
                 elif live_config:
                     if live_config.get('dhcp_enabled'):
                         adapter_statuses[adapter_name] = "DHCP"
@@ -101,7 +101,7 @@ class TrayApp(QObject):
         if self.wifi_supported:
             wifi_profiles_data, wifi_profiles_msg = self.db.get_wifi_profiles()
             if wifi_profiles_msg and self.icon:
-                self.icon.notify("Wi-Fi Profile Loading Error", wifi_profiles_msg, "Network Switcher")
+                self.icon.notify(wifi_profiles_msg, "Wi-Fi Profile Loading Error")
 
             if wifi_profiles_data:
                 wifi_menu_items = []
@@ -127,7 +127,7 @@ class TrayApp(QObject):
 
             networks_data, networks_msg = get_available_networks()
             if networks_msg and self.icon:
-                self.icon.notify("Nearby Wi-Fi Scan Error", networks_msg, "Network Switcher")
+                self.icon.notify(networks_msg, "Nearby Wi-Fi Scan Error")
 
             if networks_data:
                 nearby_menu_items = []
@@ -150,7 +150,7 @@ class TrayApp(QObject):
 
                 # 3. Indicate Adapter Status in "Adapter Actions" Submenu
                 status_str = adapter_statuses.get(adapter, "Status Unknown")
-                current_adapter_submenu_items.append(pystray.MenuItem(f"Current: {status_str}", action=None, enabled=False))
+                current_adapter_submenu_items.append(pystray.MenuItem(f"Current: {status_str}", None, enabled=False))
                 current_adapter_submenu_items.append(pystray.Menu.SEPARATOR)
 
                 action_set_dhcp = partial(self._internal_dhcp, adapter)
@@ -241,7 +241,9 @@ class TrayApp(QObject):
     def _request_exit_app(self, icon=None, item=None):
         if self.icon:
             self.icon.stop()
-        QApplication.instance().quit()
+        app_instance = QApplication.instance()
+        if app_instance:
+            app_instance.quit()
 
     def _internal_apply_config_handler(self, config_name, icon, item):
         self._request_apply_config(config_name)
@@ -275,9 +277,9 @@ class TrayApp(QObject):
             self.settings_window.auth_type_combo.setCurrentText(auth_type)
             self.settings_window.wifi_password.setFocus()
             QMessageBox.information(self.settings_window, "Nearby Network Selected",
-                                    f"'{network_ssid}' selected. Please enter password if required and click 'Apply Wi-Fi Profile'.")
+                                    f"'{network_ssid}' selected. Please enter password if required and click 'Apply Selected/Entered Wi-Fi'.")
         elif self.icon:
-            self.icon.notify("Settings window not available for nearby network connection.", "Error", "Network Switcher")
+            self.icon.notify("Settings window not available for nearby network connection.", "Error")
 
 
     def _internal_apply_config_task(self, config_name):
@@ -366,7 +368,7 @@ class TrayApp(QObject):
         if not current_config_data:
             error_details = msg if msg else "No details provided."
             if self.icon:
-                self.icon.notify(f"Could not retrieve current settings for {adapter_name}: {error_details}", "Error", "Network Switcher")
+                self.icon.notify(f"Could not retrieve current settings for {adapter_name}: {error_details}", "Error")
             return
 
         if not self.settings_window or not self.settings_window.isVisible():
