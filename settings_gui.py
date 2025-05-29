@@ -24,6 +24,7 @@ class SettingsGUI(QMainWindow):
     dns_secondary: QLineEdit
     router_ip: QLineEdit
     router_port: QLineEdit
+    router_refresh_interval: QLineEdit
 
     adapter_combo: QComboBox
     router_protocol_combo: QComboBox
@@ -62,7 +63,7 @@ class SettingsGUI(QMainWindow):
         self.wifi_supported = has_wifi_support()
 
         self.setWindowTitle("Network Configuration Settings")
-        initial_height = 650 if self.wifi_supported else 580 # Adjusted height slightly for new buttons
+        initial_height = 680 if self.wifi_supported else 610 # Adjusted height for new field + buttons
         self.resize(750, initial_height)
 
         self.status_bar = QStatusBar()
@@ -117,6 +118,7 @@ class SettingsGUI(QMainWindow):
             ("Secondary DNS (optional):", "dns_secondary"),
             ("Router Login IP (optional):", "router_ip"),
             ("Router Login Port (optional):", "router_port", "e.g., 8080"),
+            ("Router Refresh Interval (s):", "router_refresh_interval", "e.g., 5"),
         ]
 
         for label_text, attr_name, *rest in fields_data:
@@ -587,6 +589,7 @@ class SettingsGUI(QMainWindow):
             self.dns_secondary.setText(config.get("dns_secondary", ""))
             self.router_ip.setText(config.get("router_ip", ""))
             self.router_port.setText(config.get("router_port", ""))
+            self.router_refresh_interval.setText(str(config.get("router_refresh_interval", 5)))
             self.router_protocol_combo.setCurrentText(config.get("router_protocol", "http"))
 
             # Set adapter_combo based on short_name stored in config
@@ -671,6 +674,15 @@ class SettingsGUI(QMainWindow):
                 self.status_bar.showMessage("Save failed: Invalid Router Port.", 5000)
                 QMessageBox.critical(self, "Validation Error", f"Invalid Router Port: {router_port_val}. Must be a number.")
                 return
+            
+            router_refresh_interval_str = self.router_refresh_interval.text()
+            router_refresh_interval_val = 5 # Default
+            if router_refresh_interval_str:
+                if not router_refresh_interval_str.isdigit() or int(router_refresh_interval_str) <= 0:
+                    self.status_bar.showMessage("Save failed: Invalid Router Refresh Interval.", 5000)
+                    QMessageBox.critical(self, "Validation Error", "Router Refresh Interval must be a positive number (seconds).")
+                    return
+                router_refresh_interval_val = int(router_refresh_interval_str)
 
             config_data = { # Renamed from config to config_data
                 "ip_address": self.ip_address.text(),
@@ -682,6 +694,7 @@ class SettingsGUI(QMainWindow):
                 "router_port": self.router_port.text(),
                 "open_router": self.open_router.isChecked(),
                 "router_protocol": self.router_protocol_combo.currentText(),
+                "router_refresh_interval": router_refresh_interval_val,
             }
             config_data["adapter_name"] = self.adapter_combo.currentData() # Store short_name
 
@@ -739,6 +752,7 @@ class SettingsGUI(QMainWindow):
         self.dns_secondary.clear()
         self.router_ip.clear()
         self.router_port.clear()
+        self.router_refresh_interval.setText("5") # Default value
         self.router_protocol_combo.setCurrentText("http")
         self.open_router.setChecked(False)
         if self.wifi_supported and hasattr(self, 'wifi_ssid'): # Check attributes exist
@@ -790,6 +804,7 @@ class SettingsGUI(QMainWindow):
         self.dns_secondary.setText(config_data.get("dns", "") or config_data.get("dns_secondary", ""))
         self.router_ip.setText(config_data.get("router_ip", ""))
         self.router_port.setText(config_data.get("router_port", ""))
+        self.router_refresh_interval.setText(str(config_data.get("router_refresh_interval", 5)))
         self.router_protocol_combo.setCurrentText(config_data.get("router_protocol", "http"))
         self.open_router.setChecked(config_data.get("open_router", False))
         self.status_bar.showMessage(f"Current network settings populated for saving as '{suggested_name}'.", 5000)
@@ -898,7 +913,8 @@ class ViewConfigsDialog(QDialog):
         networks = configs_data["networks"]
         headers = [
             "Profile Name", "Adapter Name", "IP Address", "Subnet Mask", "Gateway",
-            "DNS Primary", "DNS Secondary", "Router IP", "Router Port", "Router Protocol", "Open Router"
+            "DNS Primary", "DNS Secondary", "Router IP", "Router Port", "Router Protocol",
+            "Open Router", "Router Refresh (s)"
         ]
         if self.parent_settings_gui and self.parent_settings_gui.wifi_supported:
             headers.append("Wi-Fi Profiles")
@@ -920,16 +936,17 @@ class ViewConfigsDialog(QDialog):
             self.table_widget.setItem(row_idx, 8, QTableWidgetItem(config.get("router_port", "")))
             self.table_widget.setItem(row_idx, 9, QTableWidgetItem(config.get("router_protocol", "http")))
             self.table_widget.setItem(row_idx, 10, QTableWidgetItem(str(config.get("open_router", False))))
+            self.table_widget.setItem(row_idx, 11, QTableWidgetItem(str(config.get("router_refresh_interval", 5))))
 
             if self.parent_settings_gui and self.parent_settings_gui.wifi_supported and hasattr(self.parent_settings_gui, 'db'):
+                wifi_col_idx = 12 # Column index for Wi-Fi profiles
                 wifi_profiles_data, wifi_msg = self.parent_settings_gui.db.get_wifi_profiles(name)
                 if wifi_msg:
                     print(f"Error getting Wi-Fi profiles for {name}: {wifi_msg}")
 
                 profile_strs = []
                 if wifi_profiles_data:
-                    for profile_tuple in wifi_profiles_data:
-                        p_config_name, p_ssid, p_password, p_auth_type = profile_tuple
+                    for _, p_ssid, _, p_auth_type in wifi_profiles_data: # config_name, ssid, password, auth_type
                         profile_strs.append(f"{p_ssid} ({p_auth_type})")
-                self.table_widget.setItem(row_idx, 11, QTableWidgetItem("; ".join(profile_strs)))
+                self.table_widget.setItem(row_idx, wifi_col_idx, QTableWidgetItem("; ".join(profile_strs)))
         self.table_widget.resizeColumnsToContents()

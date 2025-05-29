@@ -164,24 +164,23 @@ class TrayApp(QObject):
                 # This part needs to use the specific status determined for *this* adapter
                 if status_str.startswith("Static: "):
                     active_profile_name_for_adapter = status_str.replace("Static: ", "")
-                    if active_profile_name_for_adapter != "(Custom/Unsaved)":
-                        active_profile_details = saved_configs_all.get("networks", {}).get(active_profile_name_for_adapter)
-                        if active_profile_details and active_profile_details.get("router_ip"):
+                    if active_profile_name_for_adapter != "(Custom/Unsaved)": # Ensure it's a named profile
+                        # Use the new DB method to get router-specific config
+                        router_config_details = self.db.get_router_config_for_profile(active_profile_name_for_adapter)
+                        
+                        if router_config_details: # This implies router_ip exists
                             action_open_router = partial(
                                 self._internal_open_router_handler,
-                                active_profile_details.get("router_ip", ""),
-                                active_profile_details.get("gateway", ""), # Gateway from saved profile
-                                active_profile_details.get("router_port", ""),
-                                active_profile_details.get("router_refresh_interval", 5),
-                                active_profile_details.get("router_protocol", "http"),
+                                router_config_details["router_ip"],
+                                router_config_details["gateway"], # Gateway from the profile
+                                router_config_details["router_port"],
+                                router_config_details["router_refresh_interval"],
+                                router_config_details["router_protocol"],
                             )
                             current_adapter_submenu_items.insert(2, pystray.Menu.SEPARATOR) # Insert before DHCP/Save
                             current_adapter_submenu_items.insert(
                                 2, # Insert before DHCP/Save
-                                pystray.MenuItem(
-                                    f"Open Router ({active_profile_name_for_adapter})",
-                                    action_open_router,
-                                ),
+                                pystray.MenuItem(f"Open Router ({active_profile_name_for_adapter})", action_open_router),
                             )
 
                 # The menu item for the adapter itself uses detailed_name_or_fallback
@@ -302,11 +301,11 @@ class TrayApp(QObject):
         if success:
             if config_to_apply.get("open_router"):
                 self.open_router_signal.emit(
-                    config_to_apply.get("router_ip", ""),
-                    config_to_apply.get("gateway", ""),
-                    config_to_apply.get("router_port", ""),
-                    config_to_apply.get("router_refresh_interval", 5),
-                    config_to_apply.get("router_protocol", "http"),
+                    config_to_apply.get("router_ip", ""), # router_ip from the applied config
+                    config_to_apply.get("gateway", ""),   # gateway from the applied config
+                    config_to_apply.get("router_port", ""), # router_port from the applied config
+                    config_to_apply.get("router_refresh_interval", 5), # refresh_interval from applied config
+                    config_to_apply.get("router_protocol", "http") # protocol from applied config
                 )
             self.request_tray_menu_refresh_signal.emit()
 
