@@ -4,6 +4,14 @@ import tempfile
 import os
 import json # For parsing PowerShell JSON output
 
+# Maximum message length for pystray notifications (Windows Shell_NotifyIcon szInfo limit is 256 WCHARs)
+MAX_MESSAGE_LENGTH_FOR_NOTIFY = 250
+
+def _sanitize_message_for_notification(message: str) -> str:
+    """Ensures a message is suitable for pystray notification by truncating if too long."""
+    if len(message) > MAX_MESSAGE_LENGTH_FOR_NOTIFY:
+        return message[:MAX_MESSAGE_LENGTH_FOR_NOTIFY - 3] + "..."
+    return message
 
 def validate_ip(ip):
     """Validate IP address: each octet must be 0–255."""
@@ -41,10 +49,10 @@ def apply_network_config(adapter_name, config):
             error_message += f" Details: {e.stderr.strip()}"
         elif e.stdout: # Some commands might output errors to stdout
             error_message += f" Details: {e.stdout.strip()}"
-        return False, error_message
+        return False, _sanitize_message_for_notification(error_message)
     except ValueError as e:
-        return False, f"Invalid configuration value: {e}"
-
+        return False, _sanitize_message_for_notification(f"Invalid configuration value: {e}")
+    
 
 def get_current_adapter_config(adapter_name):
     """Get current IP, subnet, gateway, and DNS settings for an adapter."""
@@ -122,10 +130,10 @@ def get_current_adapter_config(adapter_name):
             error_message += f" Details: {e.stderr.strip()}"
         elif e.stdout:
             error_message += f" Details: {e.stdout.strip()}"
-        return None, error_message
+        return None, _sanitize_message_for_notification(error_message)
     except Exception as e:
-        return None, f"Unexpected error getting current config for {adapter_name}: {e}"
-
+        return None, _sanitize_message_for_notification(f"Unexpected error getting current config for {adapter_name}: {e}")
+    
 
 def set_adapter_to_dhcp(adapter_name):
     """Set the specified network adapter to obtain IP and DNS automatically (DHCP)."""
@@ -151,8 +159,7 @@ def set_adapter_to_dhcp(adapter_name):
             error_message += f" Details: {e.stderr.strip()}"
         elif e.stdout:
             error_message += f" Details: {e.stdout.strip()}"
-        return False, error_message
-
+        return False, _sanitize_message_for_notification(error_message)
 
 def _get_adapter_details_powershell() -> tuple[list[dict] | None, str | None]:
     """
@@ -195,14 +202,14 @@ def _get_adapter_details_powershell() -> tuple[list[dict] | None, str | None]:
         return adapters_data, None
         
     except FileNotFoundError:
-        return None, "PowerShell executable not found. Please ensure it's in your system PATH."
+        return None, _sanitize_message_for_notification("PowerShell executable not found. Please ensure it's in your system PATH.")
     except subprocess.CalledProcessError as e:
         error_detail = e.stderr.strip() if e.stderr else e.stdout.strip()
-        return None, f"PowerShell command failed: {e}. Details: {error_detail}"
+        return None, _sanitize_message_for_notification(f"PowerShell command failed: {e}. Details: {error_detail}")
     except json.JSONDecodeError as e:
-        return None, f"Failed to parse PowerShell output as JSON: {e}. Output: {result.stdout[:200]}" # Show partial output
+        return None, _sanitize_message_for_notification(f"Failed to parse PowerShell output as JSON: {e}. Output: {result.stdout[:100]}...") # Show partial output
     except Exception as e:
-        return None, f"An unexpected error occurred while fetching adapter details via PowerShell: {e}"
+        return None, _sanitize_message_for_notification(f"An unexpected error occurred while fetching adapter details via PowerShell: {e}")
 
 def list_adapters() -> tuple[list[tuple[str, str]], str | None]:
     """
@@ -218,7 +225,7 @@ def list_adapters() -> tuple[list[tuple[str, str]], str | None]:
         return [], error_msg
     
     if adapters_data is None: # Should be caught by error_msg, but as a safeguard
-        return [], "Failed to retrieve adapter details from PowerShell (no data)."
+        return [], _sanitize_message_for_notification("Failed to retrieve adapter details from PowerShell (no data).")
 
     for adapter_info in adapters_data:
         # Ensure 'Name' and 'InterfaceDescription' keys exist, though Select-Object should guarantee them
@@ -231,7 +238,7 @@ def list_adapters() -> tuple[list[tuple[str, str]], str | None]:
 
     final_message = None
     if not result_adapters_list and not error_msg:
-        final_message = "No connected (Status 'Up') network adapters found via PowerShell."
+        final_message = _sanitize_message_for_notification("No connected (Status 'Up') network adapters found via PowerShell.")
         
     return result_adapters_list, final_message
 
@@ -306,9 +313,9 @@ def get_available_networks():
         return networks, None
     except subprocess.CalledProcessError as e:
         error_detail = e.stderr.strip() if e.stderr else e.stdout.strip()
-        return [], f"Error retrieving Wi-Fi networks: {e}. Details: {error_detail}"
+        return [], _sanitize_message_for_notification(f"Error retrieving Wi-Fi networks: {e}. Details: {error_detail}")
     except Exception as e:
-        return [], f"Unexpected error retrieving Wi-Fi networks: {e}"
+        return [], _sanitize_message_for_notification(f"Unexpected error retrieving Wi-Fi networks: {e}")
 
 def has_wifi_support():
     """Check if the system has Wi-Fi support (Wi-Fi adapter or profiles)."""
@@ -344,9 +351,9 @@ def get_wifi_profiles():
         return profiles, None
     except subprocess.CalledProcessError as e:
         error_detail = e.stderr.strip() if e.stderr else e.stdout.strip()
-        return [], f"Error retrieving Wi-Fi profiles: {e}. Details: {error_detail}"
+        return [], _sanitize_message_for_notification(f"Error retrieving Wi-Fi profiles: {e}. Details: {error_detail}")
     except Exception as e:
-        return [], f"Unexpected error retrieving Wi-Fi profiles: {e}"
+        return [], _sanitize_message_for_notification(f"Unexpected error retrieving Wi-Fi profiles: {e}")
 
 
 def get_wifi_auth_type(ssid):
@@ -378,9 +385,9 @@ def get_wifi_auth_type(ssid):
         return auth_type, None
     except subprocess.CalledProcessError as e:
         error_detail = e.stderr.strip() if e.stderr else e.stdout.strip()
-        return "WPA2PSK", f"Error retrieving Wi-Fi auth type for {ssid}: {e}. Details: {error_detail}"
+        return "WPA2PSK", _sanitize_message_for_notification(f"Error retrieving Wi-Fi auth type for {ssid}: {e}. Details: {error_detail}")
     except Exception as e:
-         return "WPA2PSK", f"Unexpected error retrieving Wi-Fi auth type for {ssid}: {e}"
+         return "WPA2PSK", _sanitize_message_for_notification(f"Unexpected error retrieving Wi-Fi auth type for {ssid}: {e}")
 
 
 def get_wifi_password(ssid):
@@ -398,12 +405,12 @@ def get_wifi_password(ssid):
             if "Key Content" in line:
                 password = line.split(":")[1].strip()
                 return password, None
-        return None, f"Key Content not found for Wi-Fi profile {ssid}."
+        return None, _sanitize_message_for_notification(f"Key Content not found for Wi-Fi profile {ssid}.")
     except subprocess.CalledProcessError as e:
         error_detail = e.stderr.strip() if e.stderr else e.stdout.strip()
-        return None, f"Error retrieving Wi-Fi password for {ssid}: {e}. Details: {error_detail}"
+        return None, _sanitize_message_for_notification(f"Error retrieving Wi-Fi password for {ssid}: {e}. Details: {error_detail}")
     except Exception as e:
-        return None, f"Unexpected error retrieving Wi-Fi password for {ssid}: {e}"
+        return None, _sanitize_message_for_notification(f"Unexpected error retrieving Wi-Fi password for {ssid}: {e}")
 
 
 def apply_wifi_profile(ssid, password, adapter_name, auth_type="WPA2PSK"):
@@ -421,12 +428,12 @@ def apply_wifi_profile(ssid, password, adapter_name, auth_type="WPA2PSK"):
         connect_cmd = f'netsh wlan connect name="{ssid}" interface="{adapter_name}"'
         subprocess.run(connect_cmd, shell=True, check=True, capture_output=True, text=True, errors="ignore")
 
-        return True, f"Wi-Fi profile for {ssid} applied and connected successfully."
+        return True, _sanitize_message_for_notification(f"Wi-Fi profile for {ssid} applied and connected successfully.")
     except subprocess.CalledProcessError as e:
         error_detail = e.stderr.strip() if e.stderr else e.stdout.strip()
-        return False, f"Error applying Wi-Fi profile for {ssid}: {e}. Details: {error_detail}"
+        return False, _sanitize_message_for_notification(f"Error applying Wi-Fi profile for {ssid}: {e}. Details: {error_detail}")
     except Exception as e:
-        return False, f"Unexpected error applying Wi-Fi profile for {ssid}: {e}"
+        return False, _sanitize_message_for_notification(f"Unexpected error applying Wi-Fi profile for {ssid}: {e}")
     finally:
         if temp_file_path and os.path.exists(temp_file_path):
             os.unlink(temp_file_path)
@@ -509,7 +516,7 @@ def get_adapter_statuses(saved_configs):
     for short_name, detailed_name in active_adapters:
         live_config, get_err = get_current_adapter_config(short_name)
         if get_err and not live_config:
-            adapter_statuses[short_name] = f"Error: {get_err}"
+            adapter_statuses[short_name] = _sanitize_message_for_notification(f"Error: {get_err}")
         elif live_config:
             if live_config.get('dhcp_enabled'):
                 adapter_statuses[short_name] = "DHCP"
