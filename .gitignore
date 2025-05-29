@@ -3,3 +3,5 @@
 /__pycache__
 network_configs.db
 /.vscode
+*.spec
+/dist
