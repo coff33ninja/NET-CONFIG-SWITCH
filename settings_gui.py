@@ -1,5 +1,3 @@
-import sys
-import os
 from PyQt6.QtWidgets import (
     QMainWindow, QVBoxLayout, QWidget, QLineEdit, QComboBox, QPushButton,
     QCheckBox, QLabel, QMessageBox, QDialog, QTableWidget, QTableWidgetItem,
@@ -17,6 +15,30 @@ from db_manager import DBManager
 
 class SettingsGUI(QMainWindow):
     """GUI for managing network configurations using PyQt6."""
+    # Declare attributes for QLineEdit fields and other UI elements for type hinting
+    config_name: QLineEdit
+    ip_address: QLineEdit
+    subnet_mask: QLineEdit
+    gateway: QLineEdit
+    dns_primary: QLineEdit
+    dns_secondary: QLineEdit
+    router_ip: QLineEdit
+    router_port: QLineEdit
+
+    adapter_combo: QComboBox
+    router_protocol_combo: QComboBox
+    open_router: QCheckBox
+    config_select: QComboBox
+
+    # For Wi-Fi section if they are class members accessed elsewhere
+    wifi_scroll_area: QScrollArea
+    wifi_profile_combo: QComboBox
+    nearby_networks_combo: QComboBox
+    wifi_ssid: QLineEdit
+    wifi_password: QLineEdit
+    auth_type_combo: QComboBox
+    apply_wifi_btn: QPushButton
+
     def __init__(self, main_app_controller):
         super().__init__()
         self.main_app_controller = main_app_controller
@@ -271,7 +293,8 @@ class SettingsGUI(QMainWindow):
         wifi_main_layout.addLayout(wifi_btn_layout)
 
     def _on_wifi_profile_selected(self, selected_text):
-        if self._loading_config:
+        # Allow processing if loading config and selected_text is "None" (to clear fields)
+        if self._loading_config and selected_text != "None":
             return
 
         if not selected_text or selected_text == "None":
@@ -299,7 +322,7 @@ class SettingsGUI(QMainWindow):
             self.status_bar.showMessage(f"Loaded Wi-Fi: {ssid} (for config: {config_name_from_profile}). Enter/verify password.", 7000)
         except Exception as e:
             print(f"Error parsing Wi-Fi profile selection '{selected_text}': {e}")
-            self.status_bar.showMessage(f"Error processing Wi-Fi profile selection.", 5000)
+            self.status_bar.showMessage("Error processing Wi-Fi profile selection.", 5000)
             self.wifi_ssid.clear()
             self.wifi_password.clear()
             self.auth_type_combo.setCurrentText("WPA2PSK")
@@ -321,7 +344,8 @@ class SettingsGUI(QMainWindow):
              self.status_bar.showMessage("No nearby Wi-Fi networks found.", 3000)
 
     def update_wifi_profile_list(self):
-        if not self.wifi_supported or not hasattr(self, 'wifi_profile_combo'): return
+        if not self.wifi_supported or not hasattr(self, 'wifi_profile_combo'):
+            return
         current_selection = self.wifi_profile_combo.currentText()
         self.wifi_profile_combo.clear()
         self.wifi_profile_combo.addItem("None")
@@ -571,10 +595,12 @@ class SettingsGUI(QMainWindow):
                 for i in range(self.adapter_combo.count()):
                     if self.adapter_combo.itemData(i) == adapter_short_name_from_config:
                         self.adapter_combo.setCurrentIndex(i)
-                        break
+                        break # Adapter found and set
+                # No 'else' here to avoid resetting to index 0 if adapter_short_name_from_config is empty
                 else: # Adapter short_name from config not found in combo
                     print(f"Warning: Adapter '{adapter_short_name_from_config}' from saved config not found in current adapter list.")
-                    if self.adapter_combo.count() > 0: self.adapter_combo.setCurrentIndex(0) # Fallback
+                    if self.adapter_combo.count() > 0:
+                        self.adapter_combo.setCurrentIndex(0) # Fallback
 
             self.open_router.setChecked(config.get("open_router", False))
 
@@ -630,21 +656,23 @@ class SettingsGUI(QMainWindow):
                         QMessageBox.critical(self, "Validation Error", f"Invalid {name}: {value}")
                         return
 
-            if self.dns_secondary.text() and not validate_ip(self.dns_secondary.text()):
-                self.status_bar.showMessage(f"Save failed: Invalid Secondary DNS.", 5000)
-                QMessageBox.critical(self, "Validation Error", f"Invalid Secondary DNS: {self.dns_secondary.text()}")
+            dns_secondary_val = self.dns_secondary.text()
+            if dns_secondary_val and not validate_ip(dns_secondary_val):
+                self.status_bar.showMessage("Save failed: Invalid Secondary DNS.", 5000)
+                QMessageBox.critical(self, "Validation Error", f"Invalid Secondary DNS: {dns_secondary_val}")
                 return
-            if self.router_ip.text() and not validate_ip(self.router_ip.text()):
-                self.status_bar.showMessage(f"Save failed: Invalid Router IP.", 5000)
-                QMessageBox.critical(self, "Validation Error", f"Invalid Router IP: {self.router_ip.text()}")
+            router_ip_val = self.router_ip.text()
+            if router_ip_val and not validate_ip(router_ip_val):
+                self.status_bar.showMessage("Save failed: Invalid Router IP.", 5000)
+                QMessageBox.critical(self, "Validation Error", f"Invalid Router IP: {router_ip_val}")
                 return
-            if self.router_port.text() and not self.router_port.text().isdigit():
-                self.status_bar.showMessage(f"Save failed: Invalid Router Port.", 5000)
-                QMessageBox.critical(self, "Validation Error", f"Invalid Router Port: {self.router_port.text()}. Must be a number.")
+            router_port_val = self.router_port.text()
+            if router_port_val and not router_port_val.isdigit():
+                self.status_bar.showMessage("Save failed: Invalid Router Port.", 5000)
+                QMessageBox.critical(self, "Validation Error", f"Invalid Router Port: {router_port_val}. Must be a number.")
                 return
 
             config_data = { # Renamed from config to config_data
-                "adapter_name": self.adapter_combo.currentData(), # Store short_name
                 "ip_address": self.ip_address.text(),
                 "subnet_mask": self.subnet_mask.text(),
                 "gateway": self.gateway.text(),
@@ -655,6 +683,7 @@ class SettingsGUI(QMainWindow):
                 "open_router": self.open_router.isChecked(),
                 "router_protocol": self.router_protocol_combo.currentText(),
             }
+            config_data["adapter_name"] = self.adapter_combo.currentData() # Store short_name
 
             success, message = self.db.save_config(config_name, config_data) # Use config_data
             if success:
@@ -724,7 +753,8 @@ class SettingsGUI(QMainWindow):
 
     def update_wifi_controls_state(self, _index_or_text_from_signal=None): # Parameter can be ignored
         if not self.wifi_supported:
-            if hasattr(self, 'wifi_scroll_area'): self.wifi_scroll_area.setEnabled(False)
+            if hasattr(self, 'wifi_scroll_area'):
+                self.wifi_scroll_area.setEnabled(False)
             return
 
         # Get the short_name from currentData
@@ -750,7 +780,8 @@ class SettingsGUI(QMainWindow):
                     break
             else:
                  print(f"Warning: Current adapter '{adapter_short_name_to_set}' not found in combo list during populate_for_new_save.")
-                 if self.adapter_combo.count() > 0: self.adapter_combo.setCurrentIndex(0) # Fallback
+                 if self.adapter_combo.count() > 0:
+                     self.adapter_combo.setCurrentIndex(0) # Fallback
 
         self.ip_address.setText(config_data.get("ip_address", ""))
         self.subnet_mask.setText(config_data.get("subnet_mask", ""))
@@ -830,15 +861,20 @@ class SettingsGUI(QMainWindow):
 
 
 class ViewConfigsDialog(QDialog):
-    def __init__(self, configs_data, parent=None):
-        super().__init__(parent)
+    # Forward reference for SettingsGUI type hint
+    def __init__(self, configs_data, parent_settings_gui: 'SettingsGUI | None' = None):
+        super().__init__(parent_settings_gui) # Pass it as QWidget parent
+        self.parent_settings_gui = parent_settings_gui # Store it for typed access
+
         self.setWindowTitle("Saved Network Configurations")
         self.resize(800, 450)
-
         layout = QVBoxLayout(self)
+
         self.table_widget = QTableWidget()
         self.table_widget.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
-        self.table_widget.horizontalHeader().setStretchLastSection(True)
+        header = self.table_widget.horizontalHeader()
+        if header is not None:
+            header.setStretchLastSection(True)
         layout.addWidget(self.table_widget)
 
         self.populate_table(configs_data)
@@ -847,7 +883,9 @@ class ViewConfigsDialog(QDialog):
         button_box.accepted.connect(self.accept)
         layout.addWidget(button_box)
 
-        self.table_widget.resizeColumnsToContents()
+        header_view = self.table_widget.horizontalHeader()
+        if header_view: # Check if header_view is not None
+            header_view.setStretchLastSection(True)
 
     def populate_table(self, configs_data):
         if not configs_data or not configs_data.get("networks"):
@@ -862,8 +900,7 @@ class ViewConfigsDialog(QDialog):
             "Profile Name", "Adapter Name", "IP Address", "Subnet Mask", "Gateway",
             "DNS Primary", "DNS Secondary", "Router IP", "Router Port", "Router Protocol", "Open Router"
         ]
-        parent_gui = self.parent()
-        if hasattr(parent_gui, 'wifi_supported') and parent_gui.wifi_supported:
+        if self.parent_settings_gui and self.parent_settings_gui.wifi_supported:
             headers.append("Wi-Fi Profiles")
 
         self.table_widget.setColumnCount(len(headers))
@@ -884,8 +921,8 @@ class ViewConfigsDialog(QDialog):
             self.table_widget.setItem(row_idx, 9, QTableWidgetItem(config.get("router_protocol", "http")))
             self.table_widget.setItem(row_idx, 10, QTableWidgetItem(str(config.get("open_router", False))))
 
-            if hasattr(parent_gui, 'wifi_supported') and parent_gui.wifi_supported and hasattr(parent_gui, 'db'):
-                wifi_profiles_data, wifi_msg = parent_gui.db.get_wifi_profiles(name)
+            if self.parent_settings_gui and self.parent_settings_gui.wifi_supported and hasattr(self.parent_settings_gui, 'db'):
+                wifi_profiles_data, wifi_msg = self.parent_settings_gui.db.get_wifi_profiles(name)
                 if wifi_msg:
                     print(f"Error getting Wi-Fi profiles for {name}: {wifi_msg}")
 
@@ -895,3 +932,4 @@ class ViewConfigsDialog(QDialog):
                         p_config_name, p_ssid, p_password, p_auth_type = profile_tuple
                         profile_strs.append(f"{p_ssid} ({p_auth_type})")
                 self.table_widget.setItem(row_idx, 11, QTableWidgetItem("; ".join(profile_strs)))
+        self.table_widget.resizeColumnsToContents()
