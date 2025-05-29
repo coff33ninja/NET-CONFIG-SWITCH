@@ -12,7 +12,7 @@ from network_manager import (
     has_wifi_support, get_available_networks, apply_wifi_profile, is_wifi_adapter
 )
 from db_manager import DBManager
-
+import router_browser
 class SettingsGUI(QMainWindow):
     """GUI for managing network configurations using PyQt6."""
     # Declare attributes for QLineEdit fields and other UI elements for type hinting
