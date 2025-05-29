@@ -39,7 +39,7 @@ project_folder/
 - **Python Version**: 3.8 or higher.
 - **Dependencies**:
   ```bash
-  pip install PyQt6 pystray tkinter pillow keyring PyQt6-WebEngine6 pyinstaller cryptography
+  pip install PyQt6 pystray pillow keyring PyQt6-WebEngine pyinstaller cryptography WMI pywin32
   ```
 - **Administrator Privileges**: Required for `netsh` commands.
 - **Network Icon**: Ensure `network.ico` is in the project root.
