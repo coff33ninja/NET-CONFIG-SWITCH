@@ -5,3 +5,4 @@ network_configs.db
 /.vscode
 *.spec
 /dist
+/cookies

@@ -1,0 +1,27 @@
+LOG: Script execution started. Timestamp: 2025/05/29 21:42:43,86
+LOG: Insufficient privileges. Attempting UAC elevation.
+LOG: Exiting non-elevated instance.
+LOG: Script execution started. Timestamp: 2025/05/29 21:42:44,63
+LOG: Administrative privileges confirmed.
+LOG: Initializing script variables...
+LOG: VENV_PRIMARY_NAME=.venv, VENV_FALLBACK_NAME=venv
+LOG: WMI_REQUIRED=1, REQUIREMENTS_FILE=requirements.txt, WMI_TIMEOUT=10
+ECHO is off.
+LOG: Script execution started. Timestamp: 2025/05/29 21:52:24,10
+LOG: Insufficient privileges. Attempting UAC elevation.
+LOG: Exiting non-elevated instance.
+LOG: Script execution started. Timestamp: 2025/05/29 21:52:24,94
+LOG: Administrative privileges confirmed.
+LOG: Initializing script variables...
+LOG: VENV_PRIMARY_NAME=.venv, VENV_FALLBACK_NAME=venv
+LOG: WMI_REQUIRED=1, REQUIREMENTS_FILE=requirements.txt, WMI_TIMEOUT=10
+ECHO is off.
+LOG: Script execution started. Timestamp: 2025/05/29 21:54:03,36
+LOG: Insufficient privileges. Attempting UAC elevation.
+LOG: Exiting non-elevated instance.
+LOG: Script execution started. Timestamp: 2025/05/29 21:54:08,14
+LOG: Administrative privileges confirmed.
+LOG: Initializing script variables...
+LOG: VENV_PRIMARY_NAME=.venv, VENV_FALLBACK_NAME=venv
+LOG: WMI_REQUIRED=1, REQUIREMENTS_FILE=requirements.txt, WMI_TIMEOUT=10
+ECHO is off.
