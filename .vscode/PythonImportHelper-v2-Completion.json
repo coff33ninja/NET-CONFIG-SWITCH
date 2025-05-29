@@ -1,0 +1,1757 @@
+[
+    {
+        "label": "argparse",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "argparse",
+        "description": "argparse",
+        "detail": "argparse",
+        "documentation": {}
+    },
+    {
+        "label": "glob",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "glob",
+        "description": "glob",
+        "detail": "glob",
+        "documentation": {}
+    },
+    {
+        "label": "os",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "os",
+        "description": "os",
+        "detail": "os",
+        "documentation": {}
+    },
+    {
+        "label": "shutil",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "shutil",
+        "description": "shutil",
+        "detail": "shutil",
+        "documentation": {}
+    },
+    {
+        "label": "sys",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sys",
+        "description": "sys",
+        "detail": "sys",
+        "documentation": {}
+    },
+    {
+        "label": "sysconfig",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sysconfig",
+        "description": "sysconfig",
+        "detail": "sysconfig",
+        "documentation": {}
+    },
+    {
+        "label": "tempfile",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "tempfile",
+        "description": "tempfile",
+        "detail": "tempfile",
+        "documentation": {}
+    },
+    {
+        "label": "winreg",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "winreg",
+        "description": "winreg",
+        "detail": "winreg",
+        "documentation": {}
+    },
+    {
+        "label": "site",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "site",
+        "description": "site",
+        "detail": "site",
+        "documentation": {}
+    },
+    {
+        "label": "subprocess",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "subprocess",
+        "description": "subprocess",
+        "detail": "subprocess",
+        "documentation": {}
+    },
+    {
+        "label": "os,",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "os.",
+        "description": "os.",
+        "detail": "os.",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "datetime",
+        "description": "datetime",
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "operator",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "operator",
+        "description": "operator",
+        "detail": "operator",
+        "documentation": {}
+    },
+    {
+        "label": "threading",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "threading",
+        "description": "threading",
+        "detail": "threading",
+        "documentation": {}
+    },
+    {
+        "label": "time",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "time",
+        "description": "time",
+        "detail": "time",
+        "documentation": {}
+    },
+    {
+        "label": "unittest",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "unittest",
+        "description": "unittest",
+        "detail": "unittest",
+        "documentation": {}
+    },
+    {
+        "label": "warnings",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "warnings",
+        "description": "warnings",
+        "detail": "warnings",
+        "documentation": {}
+    },
+    {
+        "label": "pythoncom",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "pythoncom",
+        "description": "pythoncom",
+        "detail": "pythoncom",
+        "documentation": {}
+    },
+    {
+        "label": "win32api",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "win32api",
+        "description": "win32api",
+        "detail": "win32api",
+        "documentation": {}
+    },
+    {
+        "label": "win32con",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "win32con",
+        "description": "win32con",
+        "detail": "win32con",
+        "documentation": {}
+    },
+    {
+        "label": "win32file",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "win32file",
+        "description": "win32file",
+        "detail": "win32file",
+        "documentation": {}
+    },
+    {
+        "label": "wmi",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "wmi",
+        "description": "wmi",
+        "detail": "wmi",
+        "documentation": {}
+    },
+    {
+        "label": "escape",
+        "importPath": "cgi",
+        "description": "cgi",
+        "isExtraImport": true,
+        "detail": "cgi",
+        "documentation": {}
+    },
+    {
+        "label": "make_server",
+        "importPath": "wsgiref.simple_server",
+        "description": "wsgiref.simple_server",
+        "isExtraImport": true,
+        "detail": "wsgiref.simple_server",
+        "documentation": {}
+    },
+    {
+        "label": "request_uri",
+        "importPath": "wsgiref.util",
+        "description": "wsgiref.util",
+        "isExtraImport": true,
+        "detail": "wsgiref.util",
+        "documentation": {}
+    },
+    {
+        "label": "application_uri",
+        "importPath": "wsgiref.util",
+        "description": "wsgiref.util",
+        "isExtraImport": true,
+        "detail": "wsgiref.util",
+        "documentation": {}
+    },
+    {
+        "label": "shift_path_info",
+        "importPath": "wsgiref.util",
+        "description": "wsgiref.util",
+        "isExtraImport": true,
+        "detail": "wsgiref.util",
+        "documentation": {}
+    },
+    {
+        "label": "validate_ip",
+        "importPath": "network_manager",
+        "description": "network_manager",
+        "isExtraImport": true,
+        "detail": "network_manager",
+        "documentation": {}
+    },
+    {
+        "label": "get_current_adapter_config",
+        "importPath": "network_manager",
+        "description": "network_manager",
+        "isExtraImport": true,
+        "detail": "network_manager",
+        "documentation": {}
+    },
+    {
+        "label": "list_adapters",
+        "importPath": "network_manager",
+        "description": "network_manager",
+        "isExtraImport": true,
+        "detail": "network_manager",
+        "documentation": {}
+    },
+    {
+        "label": "validate_ip",
+        "importPath": "network_manager",
+        "description": "network_manager",
+        "isExtraImport": true,
+        "detail": "network_manager",
+        "documentation": {}
+    },
+    {
+        "label": "get_wifi_profiles",
+        "importPath": "network_manager",
+        "description": "network_manager",
+        "isExtraImport": true,
+        "detail": "network_manager",
+        "documentation": {}
+    },
+    {
+        "label": "get_wifi_password",
+        "importPath": "network_manager",
+        "description": "network_manager",
+        "isExtraImport": true,
+        "detail": "network_manager",
+        "documentation": {}
+    },
+    {
+        "label": "has_wifi_support",
+        "importPath": "network_manager",
+        "description": "network_manager",
+        "isExtraImport": true,
+        "detail": "network_manager",
+        "documentation": {}
+    },
+    {
+        "label": "get_available_networks",
+        "importPath": "network_manager",
+        "description": "network_manager",
+        "isExtraImport": true,
+        "detail": "network_manager",
+        "documentation": {}
+    },
+    {
+        "label": "apply_wifi_profile",
+        "importPath": "network_manager",
+        "description": "network_manager",
+        "isExtraImport": true,
+        "detail": "network_manager",
+        "documentation": {}
+    },
+    {
+        "label": "is_wifi_adapter",
+        "importPath": "network_manager",
+        "description": "network_manager",
+        "isExtraImport": true,
+        "detail": "network_manager",
+        "documentation": {}
+    },
+    {
+        "label": "apply_network_config",
+        "importPath": "network_manager",
+        "description": "network_manager",
+        "isExtraImport": true,
+        "detail": "network_manager",
+        "documentation": {}
+    },
+    {
+        "label": "list_adapters",
+        "importPath": "network_manager",
+        "description": "network_manager",
+        "isExtraImport": true,
+        "detail": "network_manager",
+        "documentation": {}
+    },
+    {
+        "label": "get_current_adapter_config",
+        "importPath": "network_manager",
+        "description": "network_manager",
+        "isExtraImport": true,
+        "detail": "network_manager",
+        "documentation": {}
+    },
+    {
+        "label": "set_adapter_to_dhcp",
+        "importPath": "network_manager",
+        "description": "network_manager",
+        "isExtraImport": true,
+        "detail": "network_manager",
+        "documentation": {}
+    },
+    {
+        "label": "apply_wifi_profile",
+        "importPath": "network_manager",
+        "description": "network_manager",
+        "isExtraImport": true,
+        "detail": "network_manager",
+        "documentation": {}
+    },
+    {
+        "label": "has_wifi_support",
+        "importPath": "network_manager",
+        "description": "network_manager",
+        "isExtraImport": true,
+        "detail": "network_manager",
+        "documentation": {}
+    },
+    {
+        "label": "is_wifi_adapter",
+        "importPath": "network_manager",
+        "description": "network_manager",
+        "isExtraImport": true,
+        "detail": "network_manager",
+        "documentation": {}
+    },
+    {
+        "label": "get_available_networks",
+        "importPath": "network_manager",
+        "description": "network_manager",
+        "isExtraImport": true,
+        "detail": "network_manager",
+        "documentation": {}
+    },
+    {
+        "label": "get_wifi_profiles",
+        "importPath": "network_manager",
+        "description": "network_manager",
+        "isExtraImport": true,
+        "detail": "network_manager",
+        "documentation": {}
+    },
+    {
+        "label": "get_wifi_password",
+        "importPath": "network_manager",
+        "description": "network_manager",
+        "isExtraImport": true,
+        "detail": "network_manager",
+        "documentation": {}
+    },
+    {
+        "label": "sqlite3",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sqlite3",
+        "description": "sqlite3",
+        "detail": "sqlite3",
+        "documentation": {}
+    },
+    {
+        "label": "Fernet",
+        "importPath": "cryptography.fernet",
+        "description": "cryptography.fernet",
+        "isExtraImport": true,
+        "detail": "cryptography.fernet",
+        "documentation": {}
+    },
+    {
+        "label": "InvalidToken",
+        "importPath": "cryptography.fernet",
+        "description": "cryptography.fernet",
+        "isExtraImport": true,
+        "detail": "cryptography.fernet",
+        "documentation": {}
+    },
+    {
+        "label": "base64",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "base64",
+        "description": "base64",
+        "detail": "base64",
+        "documentation": {}
+    },
+    {
+        "label": "json",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "json",
+        "description": "json",
+        "detail": "json",
+        "documentation": {}
+    },
+    {
+        "label": "re",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "re",
+        "description": "re",
+        "detail": "re",
+        "documentation": {}
+    },
+    {
+        "label": "xml.etree.ElementTree",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "xml.etree.ElementTree",
+        "description": "xml.etree.ElementTree",
+        "detail": "xml.etree.ElementTree",
+        "documentation": {}
+    },
+    {
+        "label": "QApplication",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QMainWindow",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QVBoxLayout",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QHBoxLayout",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QWidget",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QPushButton",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QLineEdit",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QInputDialog",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QMessageBox",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QMenu",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QComboBox",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QLabel",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QStatusBar",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QMainWindow",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QVBoxLayout",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QWidget",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QLineEdit",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QComboBox",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QPushButton",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QCheckBox",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QLabel",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QMessageBox",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QDialog",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QTableWidget",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QTableWidgetItem",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QDialogButtonBox",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QHBoxLayout",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QInputDialog",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QStatusBar",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QScrollArea",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QFileDialog",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QApplication",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QMessageBox",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QWebEngineView",
+        "importPath": "PyQt6.QtWebEngineWidgets",
+        "description": "PyQt6.QtWebEngineWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWebEngineWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QWebEngineSettings",
+        "importPath": "PyQt6.QtWebEngineCore",
+        "description": "PyQt6.QtWebEngineCore",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWebEngineCore",
+        "documentation": {}
+    },
+    {
+        "label": "QWebEngineProfile",
+        "importPath": "PyQt6.QtWebEngineCore",
+        "description": "PyQt6.QtWebEngineCore",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWebEngineCore",
+        "documentation": {}
+    },
+    {
+        "label": "QWebEnginePage",
+        "importPath": "PyQt6.QtWebEngineCore",
+        "description": "PyQt6.QtWebEngineCore",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWebEngineCore",
+        "documentation": {}
+    },
+    {
+        "label": "QUrl",
+        "importPath": "PyQt6.QtCore",
+        "description": "PyQt6.QtCore",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QTimer",
+        "importPath": "PyQt6.QtCore",
+        "description": "PyQt6.QtCore",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QDir",
+        "importPath": "PyQt6.QtCore",
+        "description": "PyQt6.QtCore",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QObject",
+        "importPath": "PyQt6.QtCore",
+        "description": "PyQt6.QtCore",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "pyqtSignal",
+        "importPath": "PyQt6.QtCore",
+        "description": "PyQt6.QtCore",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "QPixmap",
+        "importPath": "PyQt6.QtGui",
+        "description": "PyQt6.QtGui",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "QAction",
+        "importPath": "PyQt6.QtGui",
+        "description": "PyQt6.QtGui",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtGui",
+        "documentation": {}
+    },
+    {
+        "label": "urlparse",
+        "importPath": "urllib.parse",
+        "description": "urllib.parse",
+        "isExtraImport": true,
+        "detail": "urllib.parse",
+        "documentation": {}
+    },
+    {
+        "label": "socket",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "socket",
+        "description": "socket",
+        "detail": "socket",
+        "documentation": {}
+    },
+    {
+        "label": "keyring",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "keyring",
+        "description": "keyring",
+        "detail": "keyring",
+        "documentation": {}
+    },
+    {
+        "label": "DBManager",
+        "importPath": "db_manager",
+        "description": "db_manager",
+        "isExtraImport": true,
+        "detail": "db_manager",
+        "documentation": {}
+    },
+    {
+        "label": "DBManager",
+        "importPath": "db_manager",
+        "description": "db_manager",
+        "isExtraImport": true,
+        "detail": "db_manager",
+        "documentation": {}
+    },
+    {
+        "label": "DBManager",
+        "importPath": "db_manager",
+        "description": "db_manager",
+        "isExtraImport": true,
+        "detail": "db_manager",
+        "documentation": {}
+    },
+    {
+        "label": "pystray",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "pystray",
+        "description": "pystray",
+        "detail": "pystray",
+        "documentation": {}
+    },
+    {
+        "label": "Image",
+        "importPath": "PIL",
+        "description": "PIL",
+        "isExtraImport": true,
+        "detail": "PIL",
+        "documentation": {}
+    },
+    {
+        "label": "partial",
+        "importPath": "functools",
+        "description": "functools",
+        "isExtraImport": true,
+        "detail": "functools",
+        "documentation": {}
+    },
+    {
+        "label": "open_router_page",
+        "importPath": "router_browser",
+        "description": "router_browser",
+        "isExtraImport": true,
+        "detail": "router_browser",
+        "documentation": {}
+    },
+    {
+        "label": "SettingsGUI",
+        "importPath": "settings_gui",
+        "description": "settings_gui",
+        "isExtraImport": true,
+        "detail": "settings_gui",
+        "documentation": {}
+    },
+    {
+        "label": "Tee",
+        "kind": 6,
+        "importPath": ".venv.Scripts.pywin32_postinstall",
+        "description": ".venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "class Tee:\n    def __init__(self, file):\n        self.f = file\n    def write(self, what):\n        if self.f is not None:\n            try:\n                self.f.write(what.replace(\"\\n\", \"\\r\\n\"))\n            except OSError:\n                pass\n        tee_f.write(what)",
+        "detail": ".venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "get_root_hkey",
+        "kind": 2,
+        "importPath": ".venv.Scripts.pywin32_postinstall",
+        "description": ".venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "def get_root_hkey():\n    try:\n        winreg.OpenKey(\n            winreg.HKEY_LOCAL_MACHINE, root_key_name, 0, winreg.KEY_CREATE_SUB_KEY\n        )\n        return winreg.HKEY_LOCAL_MACHINE\n    except OSError:\n        # Either not exist, or no permissions to create subkey means\n        # must be HKCU\n        return winreg.HKEY_CURRENT_USER",
+        "detail": ".venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "create_shortcut",
+        "kind": 2,
+        "importPath": ".venv.Scripts.pywin32_postinstall",
+        "description": ".venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "def create_shortcut(\n    path, description, filename, arguments=\"\", workdir=\"\", iconpath=\"\", iconindex=0\n):\n    import pythoncom\n    from win32com.shell import shell\n    ilink = pythoncom.CoCreateInstance(\n        shell.CLSID_ShellLink,\n        None,\n        pythoncom.CLSCTX_INPROC_SERVER,\n        shell.IID_IShellLink,",
+        "detail": ".venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "get_special_folder_path",
+        "kind": 2,
+        "importPath": ".venv.Scripts.pywin32_postinstall",
+        "description": ".venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "def get_special_folder_path(path_name):\n    from win32com.shell import shell, shellcon\n    for maybe in \"\"\"\n        CSIDL_COMMON_STARTMENU CSIDL_STARTMENU CSIDL_COMMON_APPDATA\n        CSIDL_LOCAL_APPDATA CSIDL_APPDATA CSIDL_COMMON_DESKTOPDIRECTORY\n        CSIDL_DESKTOPDIRECTORY CSIDL_COMMON_STARTUP CSIDL_STARTUP\n        CSIDL_COMMON_PROGRAMS CSIDL_PROGRAMS CSIDL_PROGRAM_FILES_COMMON\n        CSIDL_PROGRAM_FILES CSIDL_FONTS\"\"\".split():\n        if maybe == path_name:\n            csidl = getattr(shellcon, maybe)",
+        "detail": ".venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "CopyTo",
+        "kind": 2,
+        "importPath": ".venv.Scripts.pywin32_postinstall",
+        "description": ".venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "def CopyTo(desc, src, dest):\n    import win32api\n    import win32con\n    while 1:\n        try:\n            win32api.CopyFile(src, dest, 0)\n            return\n        except win32api.error as details:\n            if details.winerror == 5:  # access denied - user not admin.\n                raise",
+        "detail": ".venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "LoadSystemModule",
+        "kind": 2,
+        "importPath": ".venv.Scripts.pywin32_postinstall",
+        "description": ".venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "def LoadSystemModule(lib_dir, modname):\n    # See if this is a debug build.\n    import importlib.machinery\n    import importlib.util\n    suffix = \"_d\" if \"_d.pyd\" in importlib.machinery.EXTENSION_SUFFIXES else \"\"\n    filename = \"%s%d%d%s.dll\" % (\n        modname,\n        sys.version_info.major,\n        sys.version_info.minor,\n        suffix,",
+        "detail": ".venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "SetPyKeyVal",
+        "kind": 2,
+        "importPath": ".venv.Scripts.pywin32_postinstall",
+        "description": ".venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "def SetPyKeyVal(key_name, value_name, value):\n    root_hkey = get_root_hkey()\n    root_key = winreg.OpenKey(root_hkey, root_key_name)\n    try:\n        my_key = winreg.CreateKey(root_key, key_name)\n        try:\n            winreg.SetValueEx(my_key, value_name, 0, winreg.REG_SZ, value)\n            if verbose:\n                print(f\"-> {root_key_name}\\\\{key_name}[{value_name}]={value!r}\")\n        finally:",
+        "detail": ".venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "UnsetPyKeyVal",
+        "kind": 2,
+        "importPath": ".venv.Scripts.pywin32_postinstall",
+        "description": ".venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "def UnsetPyKeyVal(key_name, value_name, delete_key=False):\n    root_hkey = get_root_hkey()\n    root_key = winreg.OpenKey(root_hkey, root_key_name)\n    try:\n        my_key = winreg.OpenKey(root_key, key_name, 0, winreg.KEY_SET_VALUE)\n        try:\n            winreg.DeleteValue(my_key, value_name)\n            if verbose:\n                print(f\"-> DELETE {root_key_name}\\\\{key_name}[{value_name}]\")\n        finally:",
+        "detail": ".venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "RegisterCOMObjects",
+        "kind": 2,
+        "importPath": ".venv.Scripts.pywin32_postinstall",
+        "description": ".venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "def RegisterCOMObjects(register=True):\n    import win32com.server.register\n    if register:\n        func = win32com.server.register.RegisterClasses\n    else:\n        func = win32com.server.register.UnregisterClasses\n    flags = {}\n    if not verbose:\n        flags[\"quiet\"] = 1\n    for module, klass_name in com_modules:",
+        "detail": ".venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "RegisterHelpFile",
+        "kind": 2,
+        "importPath": ".venv.Scripts.pywin32_postinstall",
+        "description": ".venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "def RegisterHelpFile(register=True, lib_dir=None):\n    if lib_dir is None:\n        lib_dir = sysconfig.get_paths()[\"platlib\"]\n    if register:\n        # Register the .chm help file.\n        chm_file = os.path.join(lib_dir, \"PyWin32.chm\")\n        if os.path.isfile(chm_file):\n            # This isn't recursive, so if 'Help' doesn't exist, we croak\n            SetPyKeyVal(\"Help\", None, None)\n            SetPyKeyVal(\"Help\\\\Pythonwin Reference\", None, chm_file)",
+        "detail": ".venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "RegisterPythonwin",
+        "kind": 2,
+        "importPath": ".venv.Scripts.pywin32_postinstall",
+        "description": ".venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "def RegisterPythonwin(register=True, lib_dir=None):\n    \"\"\"Add (or remove) Pythonwin to context menu for python scripts.\n    ??? Should probably also add Edit command for pys files also.\n    Also need to remove these keys on uninstall, but there's no function\n    to add registry entries to uninstall log ???\n    \"\"\"\n    import os\n    if lib_dir is None:\n        lib_dir = sysconfig.get_paths()[\"platlib\"]\n    classes_root = get_root_hkey()",
+        "detail": ".venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "get_shortcuts_folder",
+        "kind": 2,
+        "importPath": ".venv.Scripts.pywin32_postinstall",
+        "description": ".venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "def get_shortcuts_folder():\n    if get_root_hkey() == winreg.HKEY_LOCAL_MACHINE:\n        try:\n            fldr = get_special_folder_path(\"CSIDL_COMMON_PROGRAMS\")\n        except OSError:\n            # No CSIDL_COMMON_PROGRAMS on this platform\n            fldr = get_special_folder_path(\"CSIDL_PROGRAMS\")\n    else:\n        # non-admin install - always goes in this user's start menu.\n        fldr = get_special_folder_path(\"CSIDL_PROGRAMS\")",
+        "detail": ".venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "get_system_dir",
+        "kind": 2,
+        "importPath": ".venv.Scripts.pywin32_postinstall",
+        "description": ".venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "def get_system_dir():\n    import win32api  # we assume this exists.\n    try:\n        import pythoncom\n        import win32process\n        from win32com.shell import shell, shellcon\n        try:\n            if win32process.IsWow64Process():\n                return shell.SHGetSpecialFolderPath(0, shellcon.CSIDL_SYSTEMX86)\n            return shell.SHGetSpecialFolderPath(0, shellcon.CSIDL_SYSTEM)",
+        "detail": ".venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "fixup_dbi",
+        "kind": 2,
+        "importPath": ".venv.Scripts.pywin32_postinstall",
+        "description": ".venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "def fixup_dbi():\n    # We used to have a dbi.pyd with our .pyd files, but now have a .py file.\n    # If the user didn't uninstall, they will find the .pyd which will cause\n    # problems - so handle that.\n    import win32api\n    import win32con\n    pyd_name = os.path.join(os.path.dirname(win32api.__file__), \"dbi.pyd\")\n    pyd_d_name = os.path.join(os.path.dirname(win32api.__file__), \"dbi_d.pyd\")\n    py_name = os.path.join(os.path.dirname(win32con.__file__), \"dbi.py\")\n    for this_pyd in (pyd_name, pyd_d_name):",
+        "detail": ".venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "install",
+        "kind": 2,
+        "importPath": ".venv.Scripts.pywin32_postinstall",
+        "description": ".venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "def install(lib_dir):\n    import traceback\n    # The .pth file is now installed as a regular file.\n    # Create the .pth file in the site-packages dir, and use only relative paths\n    # We used to write a .pth directly to sys.prefix - clobber it.\n    if os.path.isfile(os.path.join(sys.prefix, \"pywin32.pth\")):\n        os.unlink(os.path.join(sys.prefix, \"pywin32.pth\"))\n    # The .pth may be new and therefore not loaded in this session.\n    # Setup the paths just in case.\n    for name in \"win32 win32\\\\lib Pythonwin\".split():",
+        "detail": ".venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "uninstall",
+        "kind": 2,
+        "importPath": ".venv.Scripts.pywin32_postinstall",
+        "description": ".venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "def uninstall(lib_dir):\n    # First ensure our system modules are loaded from pywin32_system, so\n    # we can remove the ones we copied...\n    LoadSystemModule(lib_dir, \"pywintypes\")\n    LoadSystemModule(lib_dir, \"pythoncom\")\n    try:\n        RegisterCOMObjects(False)\n    except Exception as why:\n        print(f\"Failed to unregister COM objects: {why}\")\n    try:",
+        "detail": ".venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "verify_destination",
+        "kind": 2,
+        "importPath": ".venv.Scripts.pywin32_postinstall",
+        "description": ".venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "def verify_destination(location: str) -> str:\n    location = os.path.abspath(location)\n    if not os.path.isdir(location):\n        raise argparse.ArgumentTypeError(\n            f'Path \"{location}\" is not an existing directory!'\n        )\n    return location\ndef main():\n    parser = argparse.ArgumentParser(\n        formatter_class=argparse.RawDescriptionHelpFormatter,",
+        "detail": ".venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "main",
+        "kind": 2,
+        "importPath": ".venv.Scripts.pywin32_postinstall",
+        "description": ".venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "def main():\n    parser = argparse.ArgumentParser(\n        formatter_class=argparse.RawDescriptionHelpFormatter,\n        description=\"\"\"A post-install script for the pywin32 extensions.\n    * Typical usage:\n    > python -m pywin32_postinstall -install\n    * or (shorter but you don't have control over which python environment is used)\n    > pywin32_postinstall -install\n    You need to execute this script, with a '-install' parameter,\n    to ensure the environment is setup correctly to install COM objects, services, etc.",
+        "detail": ".venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "tee_f",
+        "kind": 5,
+        "importPath": ".venv.Scripts.pywin32_postinstall",
+        "description": ".venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "tee_f = open(\n    os.path.join(\n        tempfile.gettempdir(),  # Send output somewhere so it can be found if necessary...\n        \"pywin32_postinstall.log\",\n    ),\n    \"w\",\n)\nclass Tee:\n    def __init__(self, file):\n        self.f = file",
+        "detail": ".venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "sys.stderr",
+        "kind": 5,
+        "importPath": ".venv.Scripts.pywin32_postinstall",
+        "description": ".venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "sys.stderr = Tee(sys.stderr)\nsys.stdout = Tee(sys.stdout)\ncom_modules = [\n    # module_name,                      class_names\n    (\"win32com.servers.interp\", \"Interpreter\"),\n    (\"win32com.servers.dictionary\", \"DictionaryPolicy\"),\n    (\"win32com.axscript.client.pyscript\", \"PyScript\"),\n]\n# Is this a 'silent' install - ie, avoid all dialogs.\n# Different than 'verbose'",
+        "detail": ".venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "sys.stdout",
+        "kind": 5,
+        "importPath": ".venv.Scripts.pywin32_postinstall",
+        "description": ".venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "sys.stdout = Tee(sys.stdout)\ncom_modules = [\n    # module_name,                      class_names\n    (\"win32com.servers.interp\", \"Interpreter\"),\n    (\"win32com.servers.dictionary\", \"DictionaryPolicy\"),\n    (\"win32com.axscript.client.pyscript\", \"PyScript\"),\n]\n# Is this a 'silent' install - ie, avoid all dialogs.\n# Different than 'verbose'\nsilent = 0",
+        "detail": ".venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "com_modules",
+        "kind": 5,
+        "importPath": ".venv.Scripts.pywin32_postinstall",
+        "description": ".venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "com_modules = [\n    # module_name,                      class_names\n    (\"win32com.servers.interp\", \"Interpreter\"),\n    (\"win32com.servers.dictionary\", \"DictionaryPolicy\"),\n    (\"win32com.axscript.client.pyscript\", \"PyScript\"),\n]\n# Is this a 'silent' install - ie, avoid all dialogs.\n# Different than 'verbose'\nsilent = 0\n# Verbosity of output messages.",
+        "detail": ".venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "silent",
+        "kind": 5,
+        "importPath": ".venv.Scripts.pywin32_postinstall",
+        "description": ".venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "silent = 0\n# Verbosity of output messages.\nverbose = 1\nroot_key_name = \"Software\\\\Python\\\\PythonCore\\\\\" + sys.winver\ndef get_root_hkey():\n    try:\n        winreg.OpenKey(\n            winreg.HKEY_LOCAL_MACHINE, root_key_name, 0, winreg.KEY_CREATE_SUB_KEY\n        )\n        return winreg.HKEY_LOCAL_MACHINE",
+        "detail": ".venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "verbose",
+        "kind": 5,
+        "importPath": ".venv.Scripts.pywin32_postinstall",
+        "description": ".venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "verbose = 1\nroot_key_name = \"Software\\\\Python\\\\PythonCore\\\\\" + sys.winver\ndef get_root_hkey():\n    try:\n        winreg.OpenKey(\n            winreg.HKEY_LOCAL_MACHINE, root_key_name, 0, winreg.KEY_CREATE_SUB_KEY\n        )\n        return winreg.HKEY_LOCAL_MACHINE\n    except OSError:\n        # Either not exist, or no permissions to create subkey means",
+        "detail": ".venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "root_key_name",
+        "kind": 5,
+        "importPath": ".venv.Scripts.pywin32_postinstall",
+        "description": ".venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "root_key_name = \"Software\\\\Python\\\\PythonCore\\\\\" + sys.winver\ndef get_root_hkey():\n    try:\n        winreg.OpenKey(\n            winreg.HKEY_LOCAL_MACHINE, root_key_name, 0, winreg.KEY_CREATE_SUB_KEY\n        )\n        return winreg.HKEY_LOCAL_MACHINE\n    except OSError:\n        # Either not exist, or no permissions to create subkey means\n        # must be HKCU",
+        "detail": ".venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "run_test",
+        "kind": 2,
+        "importPath": ".venv.Scripts.pywin32_testall",
+        "description": ".venv.Scripts.pywin32_testall",
+        "peekOfCode": "def run_test(script, cmdline_extras):\n    dirname, scriptname = os.path.split(script)\n    # some tests prefer to be run from their directory.\n    cmd = [sys.executable, \"-u\", scriptname] + cmdline_extras\n    print(\"--- Running '%s' ---\" % script)\n    sys.stdout.flush()\n    result = subprocess.run(cmd, check=False, cwd=dirname)\n    print(f\"*** Test script '{script}' exited with {result.returncode}\")\n    sys.stdout.flush()\n    if result.returncode:",
+        "detail": ".venv.Scripts.pywin32_testall",
+        "documentation": {}
+    },
+    {
+        "label": "find_and_run",
+        "kind": 2,
+        "importPath": ".venv.Scripts.pywin32_testall",
+        "description": ".venv.Scripts.pywin32_testall",
+        "peekOfCode": "def find_and_run(possible_locations, extras):\n    for maybe in possible_locations:\n        if os.path.isfile(maybe):\n            run_test(maybe, extras)\n            break\n    else:\n        raise RuntimeError(\n            \"Failed to locate a test script in one of %s\" % possible_locations\n        )\ndef main():",
+        "detail": ".venv.Scripts.pywin32_testall",
+        "documentation": {}
+    },
+    {
+        "label": "main",
+        "kind": 2,
+        "importPath": ".venv.Scripts.pywin32_testall",
+        "description": ".venv.Scripts.pywin32_testall",
+        "peekOfCode": "def main():\n    import argparse\n    code_directories = [project_root] + site_packages\n    parser = argparse.ArgumentParser(\n        description=\"A script to trigger tests in all subprojects of PyWin32.\"\n    )\n    parser.add_argument(\n        \"-no-user-interaction\",\n        default=False,\n        action=\"store_true\",",
+        "detail": ".venv.Scripts.pywin32_testall",
+        "documentation": {}
+    },
+    {
+        "label": "project_root",
+        "kind": 5,
+        "importPath": ".venv.Scripts.pywin32_testall",
+        "description": ".venv.Scripts.pywin32_testall",
+        "peekOfCode": "project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))\nsite_packages = [site.getusersitepackages()] + site.getsitepackages()\nfailures = []\n# Run a test using subprocess and wait for the result.\n# If we get an returncode != 0, we know that there was an error, but we don't\n# abort immediately - we run as many tests as we can.\ndef run_test(script, cmdline_extras):\n    dirname, scriptname = os.path.split(script)\n    # some tests prefer to be run from their directory.\n    cmd = [sys.executable, \"-u\", scriptname] + cmdline_extras",
+        "detail": ".venv.Scripts.pywin32_testall",
+        "documentation": {}
+    },
+    {
+        "label": "site_packages",
+        "kind": 5,
+        "importPath": ".venv.Scripts.pywin32_testall",
+        "description": ".venv.Scripts.pywin32_testall",
+        "peekOfCode": "site_packages = [site.getusersitepackages()] + site.getsitepackages()\nfailures = []\n# Run a test using subprocess and wait for the result.\n# If we get an returncode != 0, we know that there was an error, but we don't\n# abort immediately - we run as many tests as we can.\ndef run_test(script, cmdline_extras):\n    dirname, scriptname = os.path.split(script)\n    # some tests prefer to be run from their directory.\n    cmd = [sys.executable, \"-u\", scriptname] + cmdline_extras\n    print(\"--- Running '%s' ---\" % script)",
+        "detail": ".venv.Scripts.pywin32_testall",
+        "documentation": {}
+    },
+    {
+        "label": "failures",
+        "kind": 5,
+        "importPath": ".venv.Scripts.pywin32_testall",
+        "description": ".venv.Scripts.pywin32_testall",
+        "peekOfCode": "failures = []\n# Run a test using subprocess and wait for the result.\n# If we get an returncode != 0, we know that there was an error, but we don't\n# abort immediately - we run as many tests as we can.\ndef run_test(script, cmdline_extras):\n    dirname, scriptname = os.path.split(script)\n    # some tests prefer to be run from their directory.\n    cmd = [sys.executable, \"-u\", scriptname] + cmdline_extras\n    print(\"--- Running '%s' ---\" % script)\n    sys.stdout.flush()",
+        "detail": ".venv.Scripts.pywin32_testall",
+        "documentation": {}
+    },
+    {
+        "label": "TestBasicConnections",
+        "kind": 6,
+        "importPath": ".venv.Scripts.wmitest",
+        "description": ".venv.Scripts.wmitest",
+        "peekOfCode": "class TestBasicConnections(unittest.TestCase):\n    def test_basic_connection(self):\n        \"Check that a standard connection works\"\n        self.assert_(wmi.WMI())\n    def test_remote_connection(self):\n        \"Check that a remote connection works, if specified\"\n        if \"machine\" in settings:\n            self.assert_(wmi.WMI(settings['machine']))\n        else:\n            warnings.warn(\"Skipping test_remote_connection\")",
+        "detail": ".venv.Scripts.wmitest",
+        "documentation": {}
+    },
+    {
+        "label": "TestThreadedConnection",
+        "kind": 6,
+        "importPath": ".venv.Scripts.wmitest",
+        "description": ".venv.Scripts.wmitest",
+        "peekOfCode": "class TestThreadedConnection(unittest.TestCase):\n    def test_initialised_thread(self):\n        \"\"\"A WMI connection in a thread which has been initialised for COM\n        should succeed.\n        \"\"\"\n        def f(q):\n            pythoncom.CoInitialize()\n            try:\n                try:\n                    wmi.WMI()",
+        "detail": ".venv.Scripts.wmitest",
+        "documentation": {}
+    },
+    {
+        "label": "TestMoniker",
+        "kind": 6,
+        "importPath": ".venv.Scripts.wmitest",
+        "description": ".venv.Scripts.wmitest",
+        "peekOfCode": "class TestMoniker(unittest.TestCase):\n    def test_moniker(self):\n        \"\"\"Look at all possible options for moniker construction and pass\n        them through to a WMI connector\n        \"\"\"\n        for computer in COMPUTERS:\n            if computer in (None, \".\"):\n                local_authorities = [None]\n            else:\n                local_authorities = AUTHORITIES",
+        "detail": ".venv.Scripts.wmitest",
+        "documentation": {}
+    },
+    {
+        "label": "TestFunctions",
+        "kind": 6,
+        "importPath": ".venv.Scripts.wmitest",
+        "description": ".venv.Scripts.wmitest",
+        "peekOfCode": "class TestFunctions(unittest.TestCase):\n    times = [\n       ((2000, 1, 1), \"20000101******.******+***\"),\n       ((2000, 1, 1, 10, 0, 0), \"20000101100000.******+***\"),\n       ((2000, 1, 1, 10, 0, 0, 100), \"20000101100000.000100+***\"),\n       ((2000, 1, 1, 10, 0, 0, 100, \"GMT\"), \"20000101100000.000100+GMT\")\n    ]\n    def test_signed_to_unsigned(self):\n        tests = [\n           (0, 0),",
+        "detail": ".venv.Scripts.wmitest",
+        "documentation": {}
+    },
+    {
+        "label": "TestWMI",
+        "kind": 6,
+        "importPath": ".venv.Scripts.wmitest",
+        "description": ".venv.Scripts.wmitest",
+        "peekOfCode": "class TestWMI(unittest.TestCase):\n    def setUp(self):\n        self.connection = wmi.WMI(namespace=\"root/cimv2\", find_classes=False)\n        self.logical_disks = set(self.connection.Win32_LogicalDisk())\nclass TestNamespace(TestWMI):\n    def test_subclasses_of_simple(self):\n        self.assert_(\"Win32_ComputerSystem\" in self.connection.subclasses_of())\n    def test_subclasses_of_subtree(self):\n        self.assert_(\"Win32_Desktop\" in self.connection.subclasses_of(\"CIM_Setting\"))\n    def test_subclasses_of_pattern(self):",
+        "detail": ".venv.Scripts.wmitest",
+        "documentation": {}
+    },
+    {
+        "label": "TestNamespace",
+        "kind": 6,
+        "importPath": ".venv.Scripts.wmitest",
+        "description": ".venv.Scripts.wmitest",
+        "peekOfCode": "class TestNamespace(TestWMI):\n    def test_subclasses_of_simple(self):\n        self.assert_(\"Win32_ComputerSystem\" in self.connection.subclasses_of())\n    def test_subclasses_of_subtree(self):\n        self.assert_(\"Win32_Desktop\" in self.connection.subclasses_of(\"CIM_Setting\"))\n    def test_subclasses_of_pattern(self):\n        self.assert_(set([\"Win32_LogicalDisk\", \"Win32_MappedLogicalDisk\"]) <= set(self.connection.subclasses_of(\"CIM_LogicalDevice\", \"Win32_.*Disk\")))\n    def test_instances(self):\n        self.assertEquals(self.logical_disks, set(self.connection.instances(\"Win32_LogicalDisk\")))\n    def test_new(self):",
+        "detail": ".venv.Scripts.wmitest",
+        "documentation": {}
+    },
+    {
+        "label": "TestClass",
+        "kind": 6,
+        "importPath": ".venv.Scripts.wmitest",
+        "description": ".venv.Scripts.wmitest",
+        "peekOfCode": "class TestClass(TestWMI):\n    def test_class_from_namespace(self):\n        self.assert_(self.connection.Win32_ComputerSystem._namespace is self.connection)\n    def test_class_without_namespace(self):\n        wmi_class = wmi.GetObject(\"winmgmts:Win32_ComputerSystem\")\n        self.assert_(wmi._wmi_class(None, wmi_class)._namespace)\n    def test_query(self):\n        self.assertEquals(\n            set(self.connection.Win32_ComputerSystem.query()),\n            set(self.connection.query(\"SELECT * FROM Win32_ComputerSystem\"))",
+        "detail": ".venv.Scripts.wmitest",
+        "documentation": {}
+    },
+    {
+        "label": "TestWatcher",
+        "kind": 6,
+        "importPath": ".venv.Scripts.wmitest",
+        "description": ".venv.Scripts.wmitest",
+        "peekOfCode": "class TestWatcher(TestWMI):\n    def new_letter(self):\n        return \\\n            set(\"%s:\" % chr(i) for i in range(ord('A'), 1 + ord('Z'))).\\\n            difference(d.DeviceID for d in self.connection.Win32_LogicalDisk()).\\\n            pop()\n    @staticmethod\n    def create(new_letter):\n        #~ print(\"about to create drive with letter\", new_letter)\n        here = os.path.dirname(os.path.abspath(__file__))",
+        "detail": ".venv.Scripts.wmitest",
+        "documentation": {}
+    },
+    {
+        "label": "TestMethods",
+        "kind": 6,
+        "importPath": ".venv.Scripts.wmitest",
+        "description": ".venv.Scripts.wmitest",
+        "peekOfCode": "class TestMethods(TestWMI):\n    def test_exists(self):\n        \"Check that a well-known method is available by attribute\"\n        self.assert_(self.connection.Win32_Process.Create)\n    def test_params(self):\n        \"Check that the names and arrayness of params are picked up when not arrays\"\n        self.assertEquals(\n            [(n, False) for n in [\"CommandLine\", \"CurrentDirectory\", \"ProcessStartupInformation\"]],\n            self.connection.Win32_Process.Create.in_parameter_names\n        )",
+        "detail": ".venv.Scripts.wmitest",
+        "documentation": {}
+    },
+    {
+        "label": "TestProperties",
+        "kind": 6,
+        "importPath": ".venv.Scripts.wmitest",
+        "description": ".venv.Scripts.wmitest",
+        "peekOfCode": "class TestProperties(TestWMI):\n    def test_access(self):\n        \"Check that all properties are available as attributes\"\n        for d in self.logical_disks:\n            break\n        for p in d.ole_object.Properties_:\n            self.assertEqual(p.Value, getattr(d, p.Name))\n    def test_attribute_passthrough(self):\n        \"Check that unknown attributes are passed through to the underlying object\"\n        for d in self.logical_disks:",
+        "detail": ".venv.Scripts.wmitest",
+        "documentation": {}
+    },
+    {
+        "label": "TestInstances",
+        "kind": 6,
+        "importPath": ".venv.Scripts.wmitest",
+        "description": ".venv.Scripts.wmitest",
+        "peekOfCode": "class TestInstances(TestWMI):\n    def test_hashable(self):\n        \"Ensure instances are hashable so can be used in a set/dict\"\n        self.assert_(dict.fromkeys(self.logical_disks))\n    def test_equalable(self):\n        \"Ensure instances compare equal\"\n        self.assertEqual(self.logical_disks, self.logical_disks)\n    def test_not_equal_to_anything_else(self):\n        \"Ensure WMI instances are not equal to non-WMI instances\"\n        for d in self.logical_disks:",
+        "detail": ".venv.Scripts.wmitest",
+        "documentation": {}
+    },
+    {
+        "label": "TestInstanceCreation",
+        "kind": 6,
+        "importPath": ".venv.Scripts.wmitest",
+        "description": ".venv.Scripts.wmitest",
+        "peekOfCode": "class TestInstanceCreation(TestWMI):\n    def test_create_instance(self):\n        self.assert_(isinstance(self.connection.Win32_ProcessStartup.new(ShowWindow=2), wmi._wmi_object))\nclass TestAssociations(TestWMI):\n    def test_all_properties_available(self):\n        #\n        # An association can contain not only the associated\n        # classes but also extra information as well. Ensure\n        # that both types of data are correctly handled.\n        #",
+        "detail": ".venv.Scripts.wmitest",
+        "documentation": {}
+    },
+    {
+        "label": "TestAssociations",
+        "kind": 6,
+        "importPath": ".venv.Scripts.wmitest",
+        "description": ".venv.Scripts.wmitest",
+        "peekOfCode": "class TestAssociations(TestWMI):\n    def test_all_properties_available(self):\n        #\n        # An association can contain not only the associated\n        # classes but also extra information as well. Ensure\n        # that both types of data are correctly handled.\n        #\n        for q in self.connection.Win32_DiskQuota():\n            for p in q.properties:\n                try:",
+        "detail": ".venv.Scripts.wmitest",
+        "documentation": {}
+    },
+    {
+        "label": "ini",
+        "kind": 5,
+        "importPath": ".venv.Scripts.wmitest",
+        "description": ".venv.Scripts.wmitest",
+        "peekOfCode": "ini = ConfigParser.SafeConfigParser()\nini.read([\"wmitest.master.ini\", \"wmitest.ini\"])\nsettings = {}\nif ini.has_section(\"settings\"):\n    settings.update(ini.items(\"settings\"))\nexcludes = [i.strip() for i in settings.get(\"excludes\", \"\").split(\",\")]\nCOMPUTERS = [None, \".\"]\nif \"machine\" in settings:\n    COMPUTERS.append(settings['machine'])\nIMPERSONATION_LEVELS = [None, \"identify\", \"impersonate\", \"delegate\"]",
+        "detail": ".venv.Scripts.wmitest",
+        "documentation": {}
+    },
+    {
+        "label": "settings",
+        "kind": 5,
+        "importPath": ".venv.Scripts.wmitest",
+        "description": ".venv.Scripts.wmitest",
+        "peekOfCode": "settings = {}\nif ini.has_section(\"settings\"):\n    settings.update(ini.items(\"settings\"))\nexcludes = [i.strip() for i in settings.get(\"excludes\", \"\").split(\",\")]\nCOMPUTERS = [None, \".\"]\nif \"machine\" in settings:\n    COMPUTERS.append(settings['machine'])\nIMPERSONATION_LEVELS = [None, \"identify\", \"impersonate\", \"delegate\"]\nAUTHENTICATION_LEVELS = [None, \"default\", \"none\", \"connect\", \"call\", \"pkt\", \"pktintegrity\", \"pktprivacy\"]\nAUTHORITIES = [None]",
+        "detail": ".venv.Scripts.wmitest",
+        "documentation": {}
+    },
+    {
+        "label": "excludes",
+        "kind": 5,
+        "importPath": ".venv.Scripts.wmitest",
+        "description": ".venv.Scripts.wmitest",
+        "peekOfCode": "excludes = [i.strip() for i in settings.get(\"excludes\", \"\").split(\",\")]\nCOMPUTERS = [None, \".\"]\nif \"machine\" in settings:\n    COMPUTERS.append(settings['machine'])\nIMPERSONATION_LEVELS = [None, \"identify\", \"impersonate\", \"delegate\"]\nAUTHENTICATION_LEVELS = [None, \"default\", \"none\", \"connect\", \"call\", \"pkt\", \"pktintegrity\", \"pktprivacy\"]\nAUTHORITIES = [None]\nif set([\"domain\", \"machine\"]) <= set(settings):\n    #~ AUTHORITIES.append(\"kerberos:%s\" % settings['domain'])\n    AUTHORITIES.append(\"ntlmdomain:%s\" % settings['domain'])",
+        "detail": ".venv.Scripts.wmitest",
+        "documentation": {}
+    },
+    {
+        "label": "COMPUTERS",
+        "kind": 5,
+        "importPath": ".venv.Scripts.wmitest",
+        "description": ".venv.Scripts.wmitest",
+        "peekOfCode": "COMPUTERS = [None, \".\"]\nif \"machine\" in settings:\n    COMPUTERS.append(settings['machine'])\nIMPERSONATION_LEVELS = [None, \"identify\", \"impersonate\", \"delegate\"]\nAUTHENTICATION_LEVELS = [None, \"default\", \"none\", \"connect\", \"call\", \"pkt\", \"pktintegrity\", \"pktprivacy\"]\nAUTHORITIES = [None]\nif set([\"domain\", \"machine\"]) <= set(settings):\n    #~ AUTHORITIES.append(\"kerberos:%s\" % settings['domain'])\n    AUTHORITIES.append(\"ntlmdomain:%s\" % settings['domain'])\nPRIVILEGES = [None, ['security', '!shutdown']]",
+        "detail": ".venv.Scripts.wmitest",
+        "documentation": {}
+    },
+    {
+        "label": "IMPERSONATION_LEVELS",
+        "kind": 5,
+        "importPath": ".venv.Scripts.wmitest",
+        "description": ".venv.Scripts.wmitest",
+        "peekOfCode": "IMPERSONATION_LEVELS = [None, \"identify\", \"impersonate\", \"delegate\"]\nAUTHENTICATION_LEVELS = [None, \"default\", \"none\", \"connect\", \"call\", \"pkt\", \"pktintegrity\", \"pktprivacy\"]\nAUTHORITIES = [None]\nif set([\"domain\", \"machine\"]) <= set(settings):\n    #~ AUTHORITIES.append(\"kerberos:%s\" % settings['domain'])\n    AUTHORITIES.append(\"ntlmdomain:%s\" % settings['domain'])\nPRIVILEGES = [None, ['security', '!shutdown']]\nNAMESPACES = [None, \"root/cimv2\", \"default\"]\nclass TestBasicConnections(unittest.TestCase):\n    def test_basic_connection(self):",
+        "detail": ".venv.Scripts.wmitest",
+        "documentation": {}
+    },
+    {
+        "label": "AUTHENTICATION_LEVELS",
+        "kind": 5,
+        "importPath": ".venv.Scripts.wmitest",
+        "description": ".venv.Scripts.wmitest",
+        "peekOfCode": "AUTHENTICATION_LEVELS = [None, \"default\", \"none\", \"connect\", \"call\", \"pkt\", \"pktintegrity\", \"pktprivacy\"]\nAUTHORITIES = [None]\nif set([\"domain\", \"machine\"]) <= set(settings):\n    #~ AUTHORITIES.append(\"kerberos:%s\" % settings['domain'])\n    AUTHORITIES.append(\"ntlmdomain:%s\" % settings['domain'])\nPRIVILEGES = [None, ['security', '!shutdown']]\nNAMESPACES = [None, \"root/cimv2\", \"default\"]\nclass TestBasicConnections(unittest.TestCase):\n    def test_basic_connection(self):\n        \"Check that a standard connection works\"",
+        "detail": ".venv.Scripts.wmitest",
+        "documentation": {}
+    },
+    {
+        "label": "AUTHORITIES",
+        "kind": 5,
+        "importPath": ".venv.Scripts.wmitest",
+        "description": ".venv.Scripts.wmitest",
+        "peekOfCode": "AUTHORITIES = [None]\nif set([\"domain\", \"machine\"]) <= set(settings):\n    #~ AUTHORITIES.append(\"kerberos:%s\" % settings['domain'])\n    AUTHORITIES.append(\"ntlmdomain:%s\" % settings['domain'])\nPRIVILEGES = [None, ['security', '!shutdown']]\nNAMESPACES = [None, \"root/cimv2\", \"default\"]\nclass TestBasicConnections(unittest.TestCase):\n    def test_basic_connection(self):\n        \"Check that a standard connection works\"\n        self.assert_(wmi.WMI())",
+        "detail": ".venv.Scripts.wmitest",
+        "documentation": {}
+    },
+    {
+        "label": "PRIVILEGES",
+        "kind": 5,
+        "importPath": ".venv.Scripts.wmitest",
+        "description": ".venv.Scripts.wmitest",
+        "peekOfCode": "PRIVILEGES = [None, ['security', '!shutdown']]\nNAMESPACES = [None, \"root/cimv2\", \"default\"]\nclass TestBasicConnections(unittest.TestCase):\n    def test_basic_connection(self):\n        \"Check that a standard connection works\"\n        self.assert_(wmi.WMI())\n    def test_remote_connection(self):\n        \"Check that a remote connection works, if specified\"\n        if \"machine\" in settings:\n            self.assert_(wmi.WMI(settings['machine']))",
+        "detail": ".venv.Scripts.wmitest",
+        "documentation": {}
+    },
+    {
+        "label": "NAMESPACES",
+        "kind": 5,
+        "importPath": ".venv.Scripts.wmitest",
+        "description": ".venv.Scripts.wmitest",
+        "peekOfCode": "NAMESPACES = [None, \"root/cimv2\", \"default\"]\nclass TestBasicConnections(unittest.TestCase):\n    def test_basic_connection(self):\n        \"Check that a standard connection works\"\n        self.assert_(wmi.WMI())\n    def test_remote_connection(self):\n        \"Check that a remote connection works, if specified\"\n        if \"machine\" in settings:\n            self.assert_(wmi.WMI(settings['machine']))\n        else:",
+        "detail": ".venv.Scripts.wmitest",
+        "documentation": {}
+    },
+    {
+        "label": "link",
+        "kind": 2,
+        "importPath": ".venv.Scripts.wmiweb",
+        "description": ".venv.Scripts.wmiweb",
+        "peekOfCode": "def link(text, computer, namespace=None, wmi_class=None):\n    link = '<a href=\"/' + quote(computer)\n    if namespace:\n        link += \"/\" + quote(namespace)\n    if wmi_class:\n        link += \"/\" + quote(wmi_class)\n    return link + '\">' + escape(text) + '</a>'\ndef start_doc(title):\n    doc[:] = []\n    doc.append(\"\"\"",
+        "detail": ".venv.Scripts.wmiweb",
+        "documentation": {}
+    },
+    {
+        "label": "start_doc",
+        "kind": 2,
+        "importPath": ".venv.Scripts.wmiweb",
+        "description": ".venv.Scripts.wmiweb",
+        "peekOfCode": "def start_doc(title):\n    doc[:] = []\n    doc.append(\"\"\"\n    <html>\n    <head>\n    <title>%(title)s</title>\n    <style>\n    body {font-family : Verdana, sans-serif; font-size : 84%%; margin : 3em;}\n    table.items {padding-left : 30px;}\n    li, td {font-family : \"Courier New\", monospace;}",
+        "detail": ".venv.Scripts.wmiweb",
+        "documentation": {}
+    },
+    {
+        "label": "finish_doc",
+        "kind": 2,
+        "importPath": ".venv.Scripts.wmiweb",
+        "description": ".venv.Scripts.wmiweb",
+        "peekOfCode": "def finish_doc():\n    doc.append(\"\"\"\n    </body>\n    </html>\n    \"\"\" % locals())\ndef doc_table(items, n_cols=3, callback=None):\n    n_rows, n_spare_cols = divmod(len(items), n_cols)\n    doc.append('<table cellspacing=0 class=\"items\">')\n    for n_row in range(n_rows):\n        doc.append(\"<tr>\")",
+        "detail": ".venv.Scripts.wmiweb",
+        "documentation": {}
+    },
+    {
+        "label": "doc_table",
+        "kind": 2,
+        "importPath": ".venv.Scripts.wmiweb",
+        "description": ".venv.Scripts.wmiweb",
+        "peekOfCode": "def doc_table(items, n_cols=3, callback=None):\n    n_rows, n_spare_cols = divmod(len(items), n_cols)\n    doc.append('<table cellspacing=0 class=\"items\">')\n    for n_row in range(n_rows):\n        doc.append(\"<tr>\")\n        for n_col in range(n_cols):\n            item = items[n_cols * n_col + n_row]\n            if callback:\n                item = callback(item)\n            doc.append(\"<td><li>%s</li></td>\" % item)",
+        "detail": ".venv.Scripts.wmiweb",
+        "documentation": {}
+    },
+    {
+        "label": "doc_breadcrumbs",
+        "kind": 2,
+        "importPath": ".venv.Scripts.wmiweb",
+        "description": ".venv.Scripts.wmiweb",
+        "peekOfCode": "def doc_breadcrumbs(computer, namespace, wmi_class=None):\n    doc.append('<p class=\"breadcrumbs\">')\n    doc.append('%s &rarr; %s' % (link(computer, computer), link(namespace, computer, namespace)))\n    if wmi_class:\n        doc.append(' &rarr; %s' % (link(wmi_class, computer, namespace, wmi_class)))\n    doc.append('</p>')\ndef doc_wmi_class(computer, namespace, wmi_class, wmi_connection):\n    start_doc(\"WMI: Class %(wmi_class)s in namespace %(namespace)s on %(computer)s\" % locals())\n    doc_breadcrumbs(computer, namespace, wmi_class)\n    doc.append(\"<h2>%(wmi_class)s</h2>\" % locals())",
+        "detail": ".venv.Scripts.wmiweb",
+        "documentation": {}
+    },
+    {
+        "label": "doc_wmi_class",
+        "kind": 2,
+        "importPath": ".venv.Scripts.wmiweb",
+        "description": ".venv.Scripts.wmiweb",
+        "peekOfCode": "def doc_wmi_class(computer, namespace, wmi_class, wmi_connection):\n    start_doc(\"WMI: Class %(wmi_class)s in namespace %(namespace)s on %(computer)s\" % locals())\n    doc_breadcrumbs(computer, namespace, wmi_class)\n    doc.append(\"<h2>%(wmi_class)s</h2>\" % locals())\n    klass = getattr(wmi_connection, wmi_class)\n    def property_callback(property_name):\n        property = klass.wmi_property(property_name)\n        mapping = property.qualifiers.get(\"MappingStrings\")\n        if mapping is None:\n            return property_name",
+        "detail": ".venv.Scripts.wmiweb",
+        "documentation": {}
+    },
+    {
+        "label": "doc_namespace",
+        "kind": 2,
+        "importPath": ".venv.Scripts.wmiweb",
+        "description": ".venv.Scripts.wmiweb",
+        "peekOfCode": "def doc_namespace(computer, namespace, wmi_connection):\n    start_doc(\"WMI: Namespace %(namespace)s on %(computer)s\" % locals())\n    doc_breadcrumbs(computer, namespace)\n    namespaces = namespace.split(\"\\\\\")\n    namespace_links = []\n    for i, n in enumerate(namespaces):\n        namespace_links.append(link(n, computer, \"\\\\\".join(namespaces[:i+1])))\n    doc.append(\"<h2>%s</h2>\" % \"\\\\\".join(namespace_links))\n    doc.append(\"<hr>\")\n    subnamespaces = sorted(wmi_connection.__NAMESPACE())",
+        "detail": ".venv.Scripts.wmiweb",
+        "documentation": {}
+    },
+    {
+        "label": "handle_namespace",
+        "kind": 2,
+        "importPath": ".venv.Scripts.wmiweb",
+        "description": ".venv.Scripts.wmiweb",
+        "peekOfCode": "def handle_namespace(environ, computer, namespace):\n    if not namespace:\n        wmi_connection = wmi.WMI(computer, namespace=\"root/cimv2\")\n        for setting in wmi_connection.Win32_WMISetting():\n            namespace=setting.ASPScriptDefaultNamespace\n            break\n    wmi_connection = wmi.WMI(computer, namespace=namespace, find_classes=True)\n    wmi_class = shift_path_info(environ)\n    if wmi_class:\n        doc_wmi_class(computer, namespace, wmi_class, wmi_connection)",
+        "detail": ".venv.Scripts.wmiweb",
+        "documentation": {}
+    },
+    {
+        "label": "handle_computer",
+        "kind": 2,
+        "importPath": ".venv.Scripts.wmiweb",
+        "description": ".venv.Scripts.wmiweb",
+        "peekOfCode": "def handle_computer(environ, computer):\n    handle_namespace(environ, computer, shift_path_info(environ))\ndef app(environ, start_response):\n    computer = shift_path_info(environ)\n    if computer == \"favicon.ico\":\n        start_response(\"404 Not Found\", [(\"Content-Type\", \"text/plain\")])\n        return []\n    elif computer:\n        start_response(\"200 OK\", [(\"Content-Type\", \"text/html; charset=utf-8\")])\n        handle_computer(environ, computer)",
+        "detail": ".venv.Scripts.wmiweb",
+        "documentation": {}
+    },
+    {
+        "label": "app",
+        "kind": 2,
+        "importPath": ".venv.Scripts.wmiweb",
+        "description": ".venv.Scripts.wmiweb",
+        "peekOfCode": "def app(environ, start_response):\n    computer = shift_path_info(environ)\n    if computer == \"favicon.ico\":\n        start_response(\"404 Not Found\", [(\"Content-Type\", \"text/plain\")])\n        return []\n    elif computer:\n        start_response(\"200 OK\", [(\"Content-Type\", \"text/html; charset=utf-8\")])\n        handle_computer(environ, computer)\n        return(unicode(d).encode(\"utf8\") + unicode(\"\\n\").encode(\"utf8\") for d in doc)\n    else:",
+        "detail": ".venv.Scripts.wmiweb",
+        "documentation": {}
+    },
+    {
+        "label": "run_browser",
+        "kind": 2,
+        "importPath": ".venv.Scripts.wmiweb",
+        "description": ".venv.Scripts.wmiweb",
+        "peekOfCode": "def run_browser():\n    import os\n    os.startfile(\"http://localhost:%d\" % PORT)\nif __name__ == '__main__':\n    threading.Timer(3.0, run_browser).start()\n    httpd = make_server('', PORT, app)\n    try:\n        httpd.serve_forever()\n    except KeyboardInterrupt:\n        print(\"Shutting down gracefully...\")",
+        "detail": ".venv.Scripts.wmiweb",
+        "documentation": {}
+    },
+    {
+        "label": "doc",
+        "kind": 5,
+        "importPath": ".venv.Scripts.wmiweb",
+        "description": ".venv.Scripts.wmiweb",
+        "peekOfCode": "doc = []\ndef link(text, computer, namespace=None, wmi_class=None):\n    link = '<a href=\"/' + quote(computer)\n    if namespace:\n        link += \"/\" + quote(namespace)\n    if wmi_class:\n        link += \"/\" + quote(wmi_class)\n    return link + '\">' + escape(text) + '</a>'\ndef start_doc(title):\n    doc[:] = []",
+        "detail": ".venv.Scripts.wmiweb",
+        "documentation": {}
+    },
+    {
+        "label": "PORT",
+        "kind": 5,
+        "importPath": ".venv.Scripts.wmiweb",
+        "description": ".venv.Scripts.wmiweb",
+        "peekOfCode": "PORT = 8010\ndef run_browser():\n    import os\n    os.startfile(\"http://localhost:%d\" % PORT)\nif __name__ == '__main__':\n    threading.Timer(3.0, run_browser).start()\n    httpd = make_server('', PORT, app)\n    try:\n        httpd.serve_forever()\n    except KeyboardInterrupt:",
+        "detail": ".venv.Scripts.wmiweb",
+        "documentation": {}
+    },
+    {
+        "label": "TestValidateIP",
+        "kind": 6,
+        "importPath": "tests.test_network_manager",
+        "description": "tests.test_network_manager",
+        "peekOfCode": "class TestValidateIP(unittest.TestCase):\n    \"\"\"Unit tests for the validate_ip function in network_manager.py.\"\"\"\n    def test_valid_ips(self):\n        \"\"\"Test that common valid IP addresses are correctly validated.\"\"\"\n        valid_ips = [\n            \"192.168.1.1\",\n            \"0.0.0.0\",\n            \"255.255.255.255\",\n            \"10.0.0.1\",\n            \"172.16.0.1\",",
+        "detail": "tests.test_network_manager",
+        "documentation": {}
+    },
+    {
+        "label": "project_root",
+        "kind": 5,
+        "importPath": "tests.test_network_manager",
+        "description": "tests.test_network_manager",
+        "peekOfCode": "project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), \"..\"))\nif project_root not in sys.path:\n    sys.path.insert(0, project_root)\nfrom network_manager import validate_ip\nclass TestValidateIP(unittest.TestCase):\n    \"\"\"Unit tests for the validate_ip function in network_manager.py.\"\"\"\n    def test_valid_ips(self):\n        \"\"\"Test that common valid IP addresses are correctly validated.\"\"\"\n        valid_ips = [\n            \"192.168.1.1\",",
+        "detail": "tests.test_network_manager",
+        "documentation": {}
+    },
+    {
+        "label": "EncryptionKeyError",
+        "kind": 6,
+        "importPath": "db_manager",
+        "description": "db_manager",
+        "peekOfCode": "class EncryptionKeyError(Exception):\n    \"\"\"Custom exception for errors related to encryption key handling.\"\"\"\n    pass\nclass DBManager:\n    \"\"\"Manages SQLite database for network configurations, bookmarks, history, and Wi-Fi profiles.\"\"\"\n    def __init__(self):\n        self.db_file = DB_FILE\n        self._fernet = self._get_fernet()\n        self.init_db()\n    def _get_encryption_key(self) -> bytes:",
+        "detail": "db_manager",
+        "documentation": {}
+    },
+    {
+        "label": "DBManager",
+        "kind": 6,
+        "importPath": "db_manager",
+        "description": "db_manager",
+        "peekOfCode": "class DBManager:\n    \"\"\"Manages SQLite database for network configurations, bookmarks, history, and Wi-Fi profiles.\"\"\"\n    def __init__(self):\n        self.db_file = DB_FILE\n        self._fernet = self._get_fernet()\n        self.init_db()\n    def _get_encryption_key(self) -> bytes:\n        \"\"\"\n        Retrieves the encryption key from KEY_FILE or generates and stores a new one.\n        Returns the key as bytes.",
+        "detail": "db_manager",
+        "documentation": {}
+    },
+    {
+        "label": "DB_FILE",
+        "kind": 5,
+        "importPath": "db_manager",
+        "description": "db_manager",
+        "peekOfCode": "DB_FILE = \"network_configs.db\"\nDB_DIR = os.path.dirname(os.path.abspath(DB_FILE))\nif not os.path.exists(DB_DIR) and DB_DIR != \"\":\n    os.makedirs(DB_DIR, exist_ok=True)\nKEY_FILE = os.path.join(DB_DIR, \"network_config_encryption.key\")\nclass EncryptionKeyError(Exception):\n    \"\"\"Custom exception for errors related to encryption key handling.\"\"\"\n    pass\nclass DBManager:\n    \"\"\"Manages SQLite database for network configurations, bookmarks, history, and Wi-Fi profiles.\"\"\"",
+        "detail": "db_manager",
+        "documentation": {}
+    },
+    {
+        "label": "DB_DIR",
+        "kind": 5,
+        "importPath": "db_manager",
+        "description": "db_manager",
+        "peekOfCode": "DB_DIR = os.path.dirname(os.path.abspath(DB_FILE))\nif not os.path.exists(DB_DIR) and DB_DIR != \"\":\n    os.makedirs(DB_DIR, exist_ok=True)\nKEY_FILE = os.path.join(DB_DIR, \"network_config_encryption.key\")\nclass EncryptionKeyError(Exception):\n    \"\"\"Custom exception for errors related to encryption key handling.\"\"\"\n    pass\nclass DBManager:\n    \"\"\"Manages SQLite database for network configurations, bookmarks, history, and Wi-Fi profiles.\"\"\"\n    def __init__(self):",
+        "detail": "db_manager",
+        "documentation": {}
+    },
+    {
+        "label": "KEY_FILE",
+        "kind": 5,
+        "importPath": "db_manager",
+        "description": "db_manager",
+        "peekOfCode": "KEY_FILE = os.path.join(DB_DIR, \"network_config_encryption.key\")\nclass EncryptionKeyError(Exception):\n    \"\"\"Custom exception for errors related to encryption key handling.\"\"\"\n    pass\nclass DBManager:\n    \"\"\"Manages SQLite database for network configurations, bookmarks, history, and Wi-Fi profiles.\"\"\"\n    def __init__(self):\n        self.db_file = DB_FILE\n        self._fernet = self._get_fernet()\n        self.init_db()",
+        "detail": "db_manager",
+        "documentation": {}
+    },
+    {
+        "label": "validate_ip",
+        "kind": 2,
+        "importPath": "network_manager",
+        "description": "network_manager",
+        "peekOfCode": "def validate_ip(ip):\n    \"\"\"Validate IP address: each octet must be 0–255.\"\"\"\n    if not ip:\n        return True\n    pattern = r\"^(?:(?:[0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}(?:[0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$\"\n    return bool(re.match(pattern, ip))\ndef apply_network_config(adapter_name, config):\n    \"\"\"Apply network configuration using netsh.\"\"\"\n    try:\n        for field in [\"ip_address\", \"subnet_mask\", \"gateway\", \"dns_primary\"]:",
+        "detail": "network_manager",
+        "documentation": {}
+    },
+    {
+        "label": "apply_network_config",
+        "kind": 2,
+        "importPath": "network_manager",
+        "description": "network_manager",
+        "peekOfCode": "def apply_network_config(adapter_name, config):\n    \"\"\"Apply network configuration using netsh.\"\"\"\n    try:\n        for field in [\"ip_address\", \"subnet_mask\", \"gateway\", \"dns_primary\"]:\n            if not validate_ip(config[field]):\n                raise ValueError(f\"Invalid {field}: {config[field]}\")\n        if config[\"dns_secondary\"] and not validate_ip(config[\"dns_secondary\"]):\n            raise ValueError(f\"Invalid dns_secondary: {config['dns_secondary']}\")\n        if config[\"router_ip\"] and not validate_ip(config[\"router_ip\"]):\n            raise ValueError(f\"Invalid router_ip: {config['router_ip']}\")",
+        "detail": "network_manager",
+        "documentation": {}
+    },
+    {
+        "label": "get_current_adapter_config",
+        "kind": 2,
+        "importPath": "network_manager",
+        "description": "network_manager",
+        "peekOfCode": "def get_current_adapter_config(adapter_name):\n    \"\"\"Get current IP, subnet, gateway, and DNS settings for an adapter.\"\"\"\n    config = {\n        \"adapter_name\": adapter_name,\n        \"ip_address\": \"\",\n        \"subnet_mask\": \"\",\n        \"gateway\": \"\",\n        \"dns_primary\": \"\",\n        \"dns\": \"\",\n        \"dns_servers\": \"\",",
+        "detail": "network_manager",
+        "documentation": {}
+    },
+    {
+        "label": "set_adapter_to_dhcp",
+        "kind": 2,
+        "importPath": "network_manager",
+        "description": "network_manager",
+        "peekOfCode": "def set_adapter_to_dhcp(adapter_name):\n    \"\"\"Set the specified network adapter to obtain IP and DNS automatically (DHCP).\"\"\"\n    try:\n        subprocess.run(\n            f'netsh interface ip set address name=\"{adapter_name}\" source=dhcp',\n            shell=True,\n            check=True,\n            capture_output=True,\n            text=True,\n        )",
+        "detail": "network_manager",
+        "documentation": {}
+    },
+    {
+        "label": "get_adapter_details_wmi",
+        "kind": 2,
+        "importPath": "network_manager",
+        "description": "network_manager",
+        "peekOfCode": "def get_adapter_details_wmi() -> list[dict]:\n    \"\"\"\n    Fetches detailed network adapter information using WMI (Windows Management Instrumentation).\n    Returns a list of dictionaries, each containing 'short_name', 'detailed_name', and 'index'.\n    Returns an empty list if WMI is not available or if an error occurs.\n    \"\"\"\n    if not WMI_AVAILABLE:\n        return []\n    adapter_details = []\n    try:",
+        "detail": "network_manager",
+        "documentation": {}
+    },
+    {
+        "label": "list_adapters",
+        "kind": 2,
+        "importPath": "network_manager",
+        "description": "network_manager",
+        "peekOfCode": "def list_adapters() -> tuple[list[tuple[str, str]], str | None]:\n    \"\"\"\n    List available and connected network adapters.\n    Uses netsh for primary listing and WMI for detailed names if available.\n    Returns a list of tuples (short_name, detailed_name) and an optional message string.\n    \"\"\"\n    parsed_short_names = []\n    netsh_message = None\n    wmi_message = None\n    result_adapters_list = []",
+        "detail": "network_manager",
+        "documentation": {}
+    },
+    {
+        "label": "is_wifi_adapter",
+        "kind": 2,
+        "importPath": "network_manager",
+        "description": "network_manager",
+        "peekOfCode": "def is_wifi_adapter(adapter_name):\n    \"\"\"Check if an adapter is a Wi-Fi adapter.\"\"\"\n    # This function might also benefit from WMI for more robust checking,\n    # but for now, it uses netsh as per original.\n    # Adapter name here is the 'short_name'.\n    try:\n        result = subprocess.run(\n            f'netsh interface show interface name=\"{adapter_name}\"',\n            shell=True,\n            capture_output=True,",
+        "detail": "network_manager",
+        "documentation": {}
+    },
+    {
+        "label": "get_available_networks",
+        "kind": 2,
+        "importPath": "network_manager",
+        "description": "network_manager",
+        "peekOfCode": "def get_available_networks():\n    \"\"\"Retrieve nearby Wi-Fi networks with SSID, auth type, and signal strength.\"\"\"\n    try:\n        result = subprocess.run(\n            \"netsh wlan show networks mode=bssid\",\n            shell=True,\n            check=True,\n            capture_output=True,\n            text=True,\n            errors=\"ignore\",",
+        "detail": "network_manager",
+        "documentation": {}
+    },
+    {
+        "label": "has_wifi_support",
+        "kind": 2,
+        "importPath": "network_manager",
+        "description": "network_manager",
+        "peekOfCode": "def has_wifi_support():\n    \"\"\"Check if the system has Wi-Fi support (Wi-Fi adapter or profiles).\"\"\"\n    adapters_tuples, _ = list_adapters() # list_adapters now returns list of tuples and msg\n    has_wifi_adapter_flag = False\n    if adapters_tuples: # Check if list is not empty\n        has_wifi_adapter_flag = any(is_wifi_adapter(adapter_tuple[0]) for adapter_tuple in adapters_tuples)\n    # get_wifi_profiles still returns (list, msg_or_none)\n    profiles, _ = get_wifi_profiles()\n    has_profiles_flag = bool(profiles) # True if profiles list is not empty\n    return has_wifi_adapter_flag or has_profiles_flag",
+        "detail": "network_manager",
+        "documentation": {}
+    },
+    {
+        "label": "get_wifi_profiles",
+        "kind": 2,
+        "importPath": "network_manager",
+        "description": "network_manager",
+        "peekOfCode": "def get_wifi_profiles():\n    \"\"\"Retrieve available Wi-Fi profiles from the system with auth types.\"\"\"\n    try:\n        result = subprocess.run(\n            \"netsh wlan show profiles\",\n            shell=True,\n            check=True,\n            capture_output=True,\n            text=True,\n            errors=\"ignore\"",
+        "detail": "network_manager",
+        "documentation": {}
+    },
+    {
+        "label": "get_wifi_auth_type",
+        "kind": 2,
+        "importPath": "network_manager",
+        "description": "network_manager",
+        "peekOfCode": "def get_wifi_auth_type(ssid):\n    \"\"\"Retrieve the authentication type for a Wi-Fi profile.\"\"\"\n    try:\n        result = subprocess.run(\n            f'netsh wlan show profile name=\"{ssid}\" key=clear',\n            shell=True,\n            check=True,\n            capture_output=True,\n            text=True,\n            errors=\"ignore\",",
+        "detail": "network_manager",
+        "documentation": {}
+    },
+    {
+        "label": "get_wifi_password",
+        "kind": 2,
+        "importPath": "network_manager",
+        "description": "network_manager",
+        "peekOfCode": "def get_wifi_password(ssid):\n    \"\"\"Retrieve the password for a Wi-Fi profile.\"\"\"\n    try:\n        result = subprocess.run(\n            f'netsh wlan show profile name=\"{ssid}\" key=clear',\n            shell=True,\n            check=True,\n            capture_output=True,\n            text=True,\n            errors=\"ignore\",",
+        "detail": "network_manager",
+        "documentation": {}
+    },
+    {
+        "label": "apply_wifi_profile",
+        "kind": 2,
+        "importPath": "network_manager",
+        "description": "network_manager",
+        "peekOfCode": "def apply_wifi_profile(ssid, password, adapter_name, auth_type=\"WPA2PSK\"):\n    \"\"\"Apply a Wi-Fi profile to connect to a network.\"\"\"\n    temp_file_path = None\n    try:\n        with tempfile.NamedTemporaryFile(mode=\"w\", suffix=\".xml\", delete=False) as f:\n            profile_xml = generate_wifi_profile_xml(ssid, password, auth_type)\n            f.write(profile_xml)\n            temp_file_path = f.name\n        add_profile_cmd = f'netsh wlan add profile filename=\"{temp_file_path}\" interface=\"{adapter_name}\"'\n        subprocess.run(add_profile_cmd, shell=True, check=True, capture_output=True, text=True, errors=\"ignore\")",
+        "detail": "network_manager",
+        "documentation": {}
+    },
+    {
+        "label": "generate_wifi_profile_xml",
+        "kind": 2,
+        "importPath": "network_manager",
+        "description": "network_manager",
+        "peekOfCode": "def generate_wifi_profile_xml(ssid, password, auth_type):\n    \"\"\"Generate Wi-Fi profile XML based on authentication type.\"\"\"\n    if auth_type == \"open\":\n        security = \"\"\"\n            <security>\n                <authEncryption>\n                    <authentication>open</authentication>\n                    <encryption>none</encryption>\n                    <useOneX>false</useOneX>\n                </authEncryption>",
+        "detail": "network_manager",
+        "documentation": {}
+    },
+    {
+        "label": "RouterBrowser",
+        "kind": 6,
+        "importPath": "router_browser",
+        "description": "router_browser",
+        "peekOfCode": "class RouterBrowser(QMainWindow):\n    \"\"\"Custom browser for router login with navigation, credentials, and HTTPS support.\"\"\"\n    def __init__(self, router_ip, gateway, router_port=None, refresh_interval=5000, preferred_protocol=\"http\"):\n        super().__init__()\n        if not router_ip and not gateway: # Ensure at least one is provided\n            raise ValueError(\"Router IP or gateway must be provided for RouterBrowser.\")\n        self.target_ip = router_ip or gateway\n        self.router_port = router_port\n        self.current_protocol_is_https = (preferred_protocol.lower() == \"https\")\n        self.refresh_interval = refresh_interval",
+        "detail": "router_browser",
+        "documentation": {}
+    },
+    {
+        "label": "open_router_page",
+        "kind": 2,
+        "importPath": "router_browser",
+        "description": "router_browser",
+        "peekOfCode": "def open_router_page(router_ip, gateway, router_port=None, refresh_interval=5, protocol=\"http\"):\n    \"\"\"Open the router login page in a custom browser.\"\"\"\n    if not QApplication.instance():\n        QApplication(sys.argv)\n    if not router_ip and not gateway:\n        QMessageBox.critical(None, \"Error\", \"No router IP or gateway provided.\")\n        print(\"Error: No router IP or gateway provided.\")\n        return None\n    try:\n        browser = RouterBrowser(router_ip, gateway, router_port, refresh_interval * 1000, preferred_protocol=protocol)",
+        "detail": "router_browser",
+        "documentation": {}
+    },
+    {
+        "label": "SettingsGUI",
+        "kind": 6,
+        "importPath": "settings_gui",
+        "description": "settings_gui",
+        "peekOfCode": "class SettingsGUI(QMainWindow):\n    \"\"\"GUI for managing network configurations using PyQt6.\"\"\"\n    def __init__(self, main_app_controller):\n        super().__init__()\n        self.main_app_controller = main_app_controller\n        try:\n            self.db = DBManager()\n        except Exception as e:\n            QMessageBox.critical(self, \"Database Error\", f\"Failed to initialize database manager: {e}\\nSettings GUI cannot function properly.\")\n            print(f\"CRITICAL: DBManager failed to initialize: {e}\")",
+        "detail": "settings_gui",
+        "documentation": {}
+    },
+    {
+        "label": "ViewConfigsDialog",
+        "kind": 6,
+        "importPath": "settings_gui",
+        "description": "settings_gui",
+        "peekOfCode": "class ViewConfigsDialog(QDialog):\n    def __init__(self, configs_data, parent=None):\n        super().__init__(parent)\n        self.setWindowTitle(\"Saved Network Configurations\")\n        self.resize(800, 450)\n        layout = QVBoxLayout(self)\n        self.table_widget = QTableWidget()\n        self.table_widget.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)\n        self.table_widget.horizontalHeader().setStretchLastSection(True)\n        layout.addWidget(self.table_widget)",
+        "detail": "settings_gui",
+        "documentation": {}
+    },
+    {
+        "label": "TrayApp",
+        "kind": 6,
+        "importPath": "tray_app",
+        "description": "tray_app",
+        "peekOfCode": "class TrayApp(QObject):\n    \"\"\"System tray application for network configuration.\"\"\"\n    show_settings_signal = pyqtSignal()\n    prepare_settings_for_save_current_signal = pyqtSignal(str)\n    request_tray_menu_refresh_signal = pyqtSignal()\n    open_router_signal = pyqtSignal(str, str, str, int, str)\n    def __init__(self):\n        super().__init__()\n        self.db = DBManager()\n        self.icon = None",
+        "detail": "tray_app",
+        "documentation": {}
+    },
+    {
+        "label": "ICON_PATH",
+        "kind": 5,
+        "importPath": "tray_app",
+        "description": "tray_app",
+        "peekOfCode": "ICON_PATH = \"network.ico\"\nclass TrayApp(QObject):\n    \"\"\"System tray application for network configuration.\"\"\"\n    show_settings_signal = pyqtSignal()\n    prepare_settings_for_save_current_signal = pyqtSignal(str)\n    request_tray_menu_refresh_signal = pyqtSignal()\n    open_router_signal = pyqtSignal(str, str, str, int, str)\n    def __init__(self):\n        super().__init__()\n        self.db = DBManager()",
+        "detail": "tray_app",
+        "documentation": {}
+    }
+]
