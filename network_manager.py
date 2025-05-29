@@ -1,21 +1,17 @@
 import subprocess
 import re
-import xml.etree.ElementTree as ET
 import tempfile
 import os
+import json # For parsing PowerShell JSON output
 
-# 1. Add WMI Import and Availability Check
-# Requires: pip install WMI (for detailed adapter names on Windows)
-# pywin32 is often a dependency for WMI and might be needed as well.
-try:
-    import wmi
-    WMI_AVAILABLE = True
-except ImportError:
-    WMI_AVAILABLE = False
-    # Optional: print a one-time warning for developers/users if needed
-    # print("Warning: WMI library not found. Detailed adapter names will not be available. "
-    #       "Install with: pip install WMI pywin32")
+# Maximum message length for pystray notifications (Windows Shell_NotifyIcon szInfo limit is 256 WCHARs)
+MAX_MESSAGE_LENGTH_FOR_NOTIFY = 250
 
+def _sanitize_message_for_notification(message: str) -> str:
+    """Ensures a message is suitable for pystray notification by truncating if too long."""
+    if len(message) > MAX_MESSAGE_LENGTH_FOR_NOTIFY:
+        return message[:MAX_MESSAGE_LENGTH_FOR_NOTIFY - 3] + "..."
+    return message
 
 def validate_ip(ip):
     """Validate IP address: each octet must be 0–255."""
@@ -53,10 +49,10 @@ def apply_network_config(adapter_name, config):
             error_message += f" Details: {e.stderr.strip()}"
         elif e.stdout: # Some commands might output errors to stdout
             error_message += f" Details: {e.stdout.strip()}"
-        return False, error_message
+        return False, _sanitize_message_for_notification(error_message)
     except ValueError as e:
-        return False, f"Invalid configuration value: {e}"
-
+        return False, _sanitize_message_for_notification(f"Invalid configuration value: {e}")
+    
 
 def get_current_adapter_config(adapter_name):
     """Get current IP, subnet, gateway, and DNS settings for an adapter."""
@@ -85,7 +81,7 @@ def get_current_adapter_config(adapter_name):
             line = line.strip()
             if "DHCP enabled:" in line:
                 config["dhcp_enabled"] = "Yes" in line
-            elif "IP Address:" in line and not "IPv6" in line and not "Default" in line:
+            elif "IP Address:" in line and "IPv6" not in line and "Default" not in line:
                 match = re.search(r"IP Address:\s+([\d\.]+)", line)
                 if match and not config["ip_address"]:
                     config["ip_address"] = match.group(1)
@@ -134,10 +130,10 @@ def get_current_adapter_config(adapter_name):
             error_message += f" Details: {e.stderr.strip()}"
         elif e.stdout:
             error_message += f" Details: {e.stdout.strip()}"
-        return None, error_message
+        return None, _sanitize_message_for_notification(error_message)
     except Exception as e:
-        return None, f"Unexpected error getting current config for {adapter_name}: {e}"
-
+        return None, _sanitize_message_for_notification(f"Unexpected error getting current config for {adapter_name}: {e}")
+    
 
 def set_adapter_to_dhcp(adapter_name):
     """Set the specified network adapter to obtain IP and DNS automatically (DHCP)."""
@@ -163,111 +159,87 @@ def set_adapter_to_dhcp(adapter_name):
             error_message += f" Details: {e.stderr.strip()}"
         elif e.stdout:
             error_message += f" Details: {e.stdout.strip()}"
-        return False, error_message
+        return False, _sanitize_message_for_notification(error_message)
 
-# 2. Implement get_adapter_details_wmi()
-def get_adapter_details_wmi() -> list[dict]:
+def _get_adapter_details_powershell() -> tuple[list[dict] | None, str | None]:
     """
-    Fetches detailed network adapter information using WMI (Windows Management Instrumentation).
-    Returns a list of dictionaries, each containing 'short_name', 'detailed_name', and 'index'.
-    Returns an empty list if WMI is not available or if an error occurs.
+    Fetches detailed network adapter information using PowerShell.
+    Returns a list of dictionaries (each with 'Name' and 'InterfaceDescription')
+    for connected adapters, or None and an error message.
     """
-    if not WMI_AVAILABLE:
-        return []
-
-    adapter_details = []
     try:
-        c = wmi.WMI()
-        # Query for adapters that have a NetConnectionID (usually implies they are configurable in Network Connections),
-        # are physical adapters, and are network enabled.
-        raw_adapters = c.Win32_NetworkAdapter(NetConnectionIDIsNotNull=True, PhysicalAdapter=True, NetEnabled=True)
+        # PowerShell command to get connected adapters and select Name and InterfaceDescription
+        # Output is converted to JSON for easy parsing in Python
+        ps_command = (
+            "Get-NetAdapter | "
+            "Where-Object {$_.Status -eq 'Up'} | "
+            "Select-Object Name, InterfaceDescription | "
+            "ConvertTo-Json -Compress"
+        )
+        full_command = [
+            "powershell.exe",
+            "-NoProfile",
+            "-NonInteractive",
+            "-ExecutionPolicy", "Bypass",
+            "-Command", ps_command
+        ]
 
-        for adapter in raw_adapters:
-            # Use Description if available and not None/empty, otherwise fallback to Name.
-            # Some virtual adapters might have Name but no useful Description.
-            # NetConnectionID is typically the "short name" seen in netsh or Network Connections UI.
-            detailed_name = adapter.Description if adapter.Description else adapter.Name
-            adapter_details.append({
-                'short_name': adapter.NetConnectionID,
-                'detailed_name': detailed_name,
-                'index': adapter.InterfaceIndex # InterfaceIndex can be useful for other operations
-            })
+        result = subprocess.run(
+            full_command,
+            capture_output=True,
+            text=True,
+            check=True, # Raises CalledProcessError for non-zero exit codes
+            errors="ignore"
+        )
+        
+        if not result.stdout.strip(): # Handle empty output (no adapters found)
+            return [], None
+
+        adapters_data = json.loads(result.stdout)
+        # If PowerShell returns a single object not in a list, wrap it
+        if isinstance(adapters_data, dict):
+            adapters_data = [adapters_data]
+        return adapters_data, None
+        
+    except FileNotFoundError:
+        return None, _sanitize_message_for_notification("PowerShell executable not found. Please ensure it's in your system PATH.")
+    except subprocess.CalledProcessError as e:
+        error_detail = e.stderr.strip() if e.stderr else e.stdout.strip()
+        return None, _sanitize_message_for_notification(f"PowerShell command failed: {e}. Details: {error_detail}")
+    except json.JSONDecodeError as e:
+        return None, _sanitize_message_for_notification(f"Failed to parse PowerShell output as JSON: {e}. Output: {result.stdout[:100]}...") # Show partial output
     except Exception as e:
-        # Using print here as this is a utility function; logging would be better in a larger app.
-        print(f"Error fetching WMI adapter details: {e}")
-        return [] # Return empty list on error
-    return adapter_details
+        return None, _sanitize_message_for_notification(f"An unexpected error occurred while fetching adapter details via PowerShell: {e}")
 
-# 3. Modify list_adapters()
 def list_adapters() -> tuple[list[tuple[str, str]], str | None]:
     """
     List available and connected network adapters.
-    Uses netsh for primary listing and WMI for detailed names if available.
+    Uses PowerShell to get adapter names (short_name, detailed_name).
     Returns a list of tuples (short_name, detailed_name) and an optional message string.
     """
-    parsed_short_names = []
-    netsh_message = None
-    wmi_message = None
     result_adapters_list = []
+    
+    adapters_data, error_msg = _get_adapter_details_powershell()
 
-    try:
-        cmd = "netsh interface ip show interfaces"
-        result = subprocess.run(
-            cmd,
-            shell=True,
-            capture_output=True,
-            text=True,
-            check=False,
-            errors="ignore"
-        )
+    if error_msg:
+        return [], error_msg
+    
+    if adapters_data is None: # Should be caught by error_msg, but as a safeguard
+        return [], _sanitize_message_for_notification("Failed to retrieve adapter details from PowerShell (no data).")
 
-        if result.returncode != 0:
-            error_detail = result.stderr.strip() if result.stderr else result.stdout.strip()
-            netsh_message = f"Error executing 'netsh interface ip show interfaces': RC={result.returncode}. Details: {error_detail}"
-        else:
-            line_regex = re.compile(r"^\s*\d+\s+\S+\s+\S+\s+(connected|disconnected|disabled)\s+(.+)$")
-            for line in result.stdout.splitlines():
-                match = line_regex.match(line.strip())
-                if match:
-                    state = match.group(1).strip().lower()
-                    name = match.group(2).strip()
-                    if state == "connected" and name.lower() != "loopback pseudo-interface 1":
-                        parsed_short_names.append(name)
-            if not parsed_short_names:
-                netsh_message = "No connected adapters found via netsh."
+    for adapter_info in adapters_data:
+        # Ensure 'Name' and 'InterfaceDescription' keys exist, though Select-Object should guarantee them
+        short_name = adapter_info.get("Name")
+        detailed_name = adapter_info.get("InterfaceDescription")
+        if short_name and detailed_name:
+            result_adapters_list.append((short_name, detailed_name))
+        elif short_name: # Fallback if InterfaceDescription is missing for some reason
+            result_adapters_list.append((short_name, short_name))
 
-    except FileNotFoundError:
-        netsh_message = "Error: 'netsh' command not found."
-    except Exception as e:
-        netsh_message = f"Unexpected error in netsh part of list_adapters: {e}"
-
-    # WMI part
-    wmi_map = {}
-    if WMI_AVAILABLE:
-        wmi_details_list = get_adapter_details_wmi()
-        if wmi_details_list:
-            wmi_map = {item['short_name']: item['detailed_name'] for item in wmi_details_list}
-        else:
-            # WMI is available but returned no data or get_adapter_details_wmi itself had an internal error (already printed by it)
-             wmi_message = "WMI query failed or returned no detailed adapter data."
-    else:
-        wmi_message = "WMI library not available; detailed adapter names could not be fetched."
-
-    # Combine results
-    for short_name in parsed_short_names:
-        detailed_name = wmi_map.get(short_name, short_name) # Fallback to short_name
-        result_adapters_list.append((short_name, detailed_name))
-
-    # Combine messages
     final_message = None
-    if netsh_message and wmi_message:
-        final_message = f"{netsh_message} {wmi_message}"
-    else:
-        final_message = netsh_message or wmi_message
-
-    if not result_adapters_list and not final_message: # If list is empty and no errors, means no adapters
-        final_message = "No connected network adapters found."
-
+    if not result_adapters_list and not error_msg:
+        final_message = _sanitize_message_for_notification("No connected (Status 'Up') network adapters found via PowerShell.")
+        
     return result_adapters_list, final_message
 
 
@@ -293,7 +265,7 @@ def is_wifi_adapter(adapter_name):
     except Exception:
         return False
 
-
+# 4. Update has_wifi_support()
 def get_available_networks():
     """Retrieve nearby Wi-Fi networks with SSID, auth type, and signal strength."""
     try:
@@ -341,11 +313,10 @@ def get_available_networks():
         return networks, None
     except subprocess.CalledProcessError as e:
         error_detail = e.stderr.strip() if e.stderr else e.stdout.strip()
-        return [], f"Error retrieving Wi-Fi networks: {e}. Details: {error_detail}"
+        return [], _sanitize_message_for_notification(f"Error retrieving Wi-Fi networks: {e}. Details: {error_detail}")
     except Exception as e:
-        return [], f"Unexpected error retrieving Wi-Fi networks: {e}"
+        return [], _sanitize_message_for_notification(f"Unexpected error retrieving Wi-Fi networks: {e}")
 
-# 4. Update has_wifi_support()
 def has_wifi_support():
     """Check if the system has Wi-Fi support (Wi-Fi adapter or profiles)."""
     adapters_tuples, _ = list_adapters() # list_adapters now returns list of tuples and msg
@@ -380,9 +351,9 @@ def get_wifi_profiles():
         return profiles, None
     except subprocess.CalledProcessError as e:
         error_detail = e.stderr.strip() if e.stderr else e.stdout.strip()
-        return [], f"Error retrieving Wi-Fi profiles: {e}. Details: {error_detail}"
+        return [], _sanitize_message_for_notification(f"Error retrieving Wi-Fi profiles: {e}. Details: {error_detail}")
     except Exception as e:
-        return [], f"Unexpected error retrieving Wi-Fi profiles: {e}"
+        return [], _sanitize_message_for_notification(f"Unexpected error retrieving Wi-Fi profiles: {e}")
 
 
 def get_wifi_auth_type(ssid):
@@ -414,9 +385,9 @@ def get_wifi_auth_type(ssid):
         return auth_type, None
     except subprocess.CalledProcessError as e:
         error_detail = e.stderr.strip() if e.stderr else e.stdout.strip()
-        return "WPA2PSK", f"Error retrieving Wi-Fi auth type for {ssid}: {e}. Details: {error_detail}"
+        return "WPA2PSK", _sanitize_message_for_notification(f"Error retrieving Wi-Fi auth type for {ssid}: {e}. Details: {error_detail}")
     except Exception as e:
-         return "WPA2PSK", f"Unexpected error retrieving Wi-Fi auth type for {ssid}: {e}"
+         return "WPA2PSK", _sanitize_message_for_notification(f"Unexpected error retrieving Wi-Fi auth type for {ssid}: {e}")
 
 
 def get_wifi_password(ssid):
@@ -434,12 +405,12 @@ def get_wifi_password(ssid):
             if "Key Content" in line:
                 password = line.split(":")[1].strip()
                 return password, None
-        return None, f"Key Content not found for Wi-Fi profile {ssid}."
+        return None, _sanitize_message_for_notification(f"Key Content not found for Wi-Fi profile {ssid}.")
     except subprocess.CalledProcessError as e:
         error_detail = e.stderr.strip() if e.stderr else e.stdout.strip()
-        return None, f"Error retrieving Wi-Fi password for {ssid}: {e}. Details: {error_detail}"
+        return None, _sanitize_message_for_notification(f"Error retrieving Wi-Fi password for {ssid}: {e}. Details: {error_detail}")
     except Exception as e:
-        return None, f"Unexpected error retrieving Wi-Fi password for {ssid}: {e}"
+        return None, _sanitize_message_for_notification(f"Unexpected error retrieving Wi-Fi password for {ssid}: {e}")
 
 
 def apply_wifi_profile(ssid, password, adapter_name, auth_type="WPA2PSK"):
@@ -457,12 +428,12 @@ def apply_wifi_profile(ssid, password, adapter_name, auth_type="WPA2PSK"):
         connect_cmd = f'netsh wlan connect name="{ssid}" interface="{adapter_name}"'
         subprocess.run(connect_cmd, shell=True, check=True, capture_output=True, text=True, errors="ignore")
 
-        return True, f"Wi-Fi profile for {ssid} applied and connected successfully."
+        return True, _sanitize_message_for_notification(f"Wi-Fi profile for {ssid} applied and connected successfully.")
     except subprocess.CalledProcessError as e:
         error_detail = e.stderr.strip() if e.stderr else e.stdout.strip()
-        return False, f"Error applying Wi-Fi profile for {ssid}: {e}. Details: {error_detail}"
+        return False, _sanitize_message_for_notification(f"Error applying Wi-Fi profile for {ssid}: {e}. Details: {error_detail}")
     except Exception as e:
-        return False, f"Unexpected error applying Wi-Fi profile for {ssid}: {e}"
+        return False, _sanitize_message_for_notification(f"Unexpected error applying Wi-Fi profile for {ssid}: {e}")
     finally:
         if temp_file_path and os.path.exists(temp_file_path):
             os.unlink(temp_file_path)
@@ -545,7 +516,7 @@ def get_adapter_statuses(saved_configs):
     for short_name, detailed_name in active_adapters:
         live_config, get_err = get_current_adapter_config(short_name)
         if get_err and not live_config:
-            adapter_statuses[short_name] = f"Error: {get_err}"
+            adapter_statuses[short_name] = _sanitize_message_for_notification(f"Error: {get_err}")
         elif live_config:
             if live_config.get('dhcp_enabled'):
                 adapter_statuses[short_name] = "DHCP"

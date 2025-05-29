@@ -15,9 +15,7 @@ from network_manager import (
     apply_wifi_profile,
     has_wifi_support,
     is_wifi_adapter,
-    get_available_networks,
-    get_wifi_profiles as nm_get_wifi_profiles,
-    get_wifi_password as nm_get_wifi_password,
+    get_available_networks, # Keep get_available_networks
     get_adapter_statuses
 )
 from router_browser import open_router_page
@@ -32,7 +30,7 @@ class TrayApp(QObject):
     show_settings_signal = pyqtSignal()
     prepare_settings_for_save_current_signal = pyqtSignal(str)
     request_tray_menu_refresh_signal = pyqtSignal()
-    open_router_signal = pyqtSignal(str, str, str, int, str)
+    open_router_signal = pyqtSignal(str, str, int, str) # router_ip, port, interval, protocol
 
     def __init__(self):
         super().__init__()
@@ -48,7 +46,7 @@ class TrayApp(QObject):
         self.request_tray_menu_refresh_signal.connect(self.update_tray_menu)
         self.open_router_signal.connect(self._slot_open_router_page)
 
-    def _internal_save_current_settings_handler(self, adapter_name, icon, item):
+    def _internal_save_current_settings_handler(self, adapter_name, icon=None, item=None):
         """Handler for saving current settings menu item."""
         self._request_save_current_settings(adapter_name)
 
@@ -64,7 +62,7 @@ class TrayApp(QObject):
 
         if overall_status_fetch_err:
             if self.icon:
-                self.icon.notify("Adapter Status Error", overall_status_fetch_err, "Network Switcher")
+                self.icon.notify(overall_status_fetch_err, "Adapter Status Error")
             menu_items.append(
                 pystray.MenuItem(
                     f"Error fetching adapter statuses: {overall_status_fetch_err}", action=None, enabled=False
@@ -80,7 +78,7 @@ class TrayApp(QObject):
             # If get_adapter_statuses didn't report an error (or even if it did, this is a more direct check for list_adapters)
             # and this separate call to list_adapters fails, note it.
             if self.icon:
-                self.icon.notify("Adapter Listing Error", list_adapters_err_separate_call, "Network Switcher")
+                self.icon.notify(list_adapters_err_separate_call, "Adapter Listing Error")
             menu_items.append(
                 pystray.MenuItem(
                     f"Error listing adapters: {list_adapters_err_separate_call}", action=None, enabled=False
@@ -99,7 +97,7 @@ class TrayApp(QObject):
         if self.wifi_supported:
             wifi_profiles_data, wifi_profiles_msg = self.db.get_wifi_profiles()
             if wifi_profiles_msg and self.icon:
-                self.icon.notify("Wi-Fi Profile Loading Error", wifi_profiles_msg, "Network Switcher")
+                self.icon.notify(wifi_profiles_msg, "Wi-Fi Profile Loading Error")
             if wifi_profiles_data:
                 wifi_menu_items = []
                 for profile in wifi_profiles_data:
@@ -123,7 +121,7 @@ class TrayApp(QObject):
                     )
             networks_data, networks_msg = get_available_networks()
             if networks_msg and self.icon:
-                self.icon.notify("Nearby Wi-Fi Scan Error", networks_msg, "Network Switcher")
+                self.icon.notify(networks_msg, "Nearby Wi-Fi Scan Error")
 
             if networks_data:
                 nearby_menu_items = []
@@ -164,27 +162,28 @@ class TrayApp(QObject):
 
                 # Logic for "Open Router" based on active config for *this* adapter
                 # This part needs to use the specific status determined for *this* adapter
+                profile_name = None
                 if status_str.startswith("Static: "):
-                    active_profile_name_for_adapter = status_str.replace("Static: ", "")
-                    if active_profile_name_for_adapter != "(Custom/Unsaved)":
-                        active_profile_details = saved_configs_all.get("networks", {}).get(active_profile_name_for_adapter)
-                        if active_profile_details and active_profile_details.get("router_ip"):
-                            action_open_router = partial(
-                                self._internal_open_router_handler,
-                                active_profile_details.get("router_ip", ""),
-                                active_profile_details.get("gateway", ""), # Gateway from saved profile
-                                active_profile_details.get("router_port", ""),
-                                active_profile_details.get("router_refresh_interval", 5),
-                                active_profile_details.get("router_protocol", "http"),
-                            )
-                            current_adapter_submenu_items.insert(2, pystray.Menu.SEPARATOR) # Insert before DHCP/Save
-                            current_adapter_submenu_items.insert(
-                                2, # Insert before DHCP/Save
-                                pystray.MenuItem(
-                                    f"Open Router ({active_profile_name_for_adapter})",
-                                    action_open_router,
-                                ),
-                            )
+                    profile_name = status_str.replace("Static: ", "")
+                elif status_str.startswith("DHCP: "):
+                    profile_name = status_str.replace("DHCP: ", "")
+                if profile_name and profile_name != "(Custom/Unsaved)":
+                    router_config_details = self.db.get_router_config_for_profile(profile_name)
+                    if router_config_details:
+                        router_ip = router_config_details.get("router_ip") # This will exist if details are returned
+                        router_port = router_config_details.get("router_port")
+                        refresh_interval = router_config_details.get("router_refresh_interval", 5)
+                        protocol = router_config_details.get("router_protocol", "http")
+                        open_router_action = partial(
+                            self._internal_open_router_handler,
+                            router_ip,
+                            router_port,
+                            refresh_interval,
+                            protocol,
+                        )
+                        current_adapter_submenu_items.append(
+                            pystray.MenuItem("Open Router", open_router_action)
+                        )
 
                 # The menu item for the adapter itself uses detailed_name_or_fallback
                 adapter_submenu = pystray.Menu(*current_adapter_submenu_items)
@@ -242,23 +241,23 @@ class TrayApp(QObject):
     def _request_exit_app(self, icon=None, item=None):
         if self.icon:
             self.icon.stop()
-        QApplication.instance().quit()
+        app_instance = QApplication.instance()
+        if app_instance:
+            app_instance.quit()
 
-    def _internal_apply_config_handler(self, config_name, icon, item):
+    def _internal_apply_config_handler(self, config_name, icon=None, item=None):
         self._request_apply_config(config_name)
 
     def _internal_open_router_handler(
-        self, router_ip, gateway_ip, router_port, refresh_interval, protocol, icon, item
+        self, router_ip, router_port, refresh_interval, protocol, icon=None, item=None
     ):
-        self.open_router_signal.emit(
-            router_ip, gateway_ip, router_port, refresh_interval, protocol
-        )
+        self.open_router_signal.emit(router_ip, router_port, refresh_interval, protocol)
 
-    def _internal_dhcp(self, adapter_name, icon, item):
+    def _internal_dhcp(self, adapter_name, icon=None, item=None):
         self._request_set_adapter_to_dhcp(adapter_name)
 
     def _internal_apply_wifi_handler(
-        self, config_name, ssid, password, auth_type, icon, item
+        self, config_name, ssid, password, auth_type, icon=None, item=None
     ):
         thread = threading.Thread(
             target=self._execute_wifi_task,
@@ -267,7 +266,7 @@ class TrayApp(QObject):
         )
         thread.start()
 
-    def _internal_connect_nearby_network(self, network_ssid, auth_type, icon, item):
+    def _internal_connect_nearby_network(self, network_ssid, auth_type, icon=None, item=None):
         """Open settings GUI to input password for a nearby network."""
         self.show_settings_signal.emit()
         QApplication.processEvents()
@@ -277,8 +276,8 @@ class TrayApp(QObject):
             self.settings_window.wifi_password.setFocus()
             QMessageBox.information(self.settings_window, "Nearby Network Selected",
                                     f"'{network_ssid}' selected. Please enter password if required and click 'Apply Wi-Fi Profile'.")
-        elif self.icon:
-            self.icon.notify("Settings window not available for nearby network connection.", "Error", "Network Switcher")
+        elif self.icon: # Ensure self.icon exists before calling notify
+            self.icon.notify("Settings window not available for nearby network connection.", "Error")
 
     def _internal_apply_config_task(self, config_name):
         configs = self.db.load_configs()
@@ -287,7 +286,7 @@ class TrayApp(QObject):
         if config_name not in network_configs:
             if self.icon:
                 self.icon.notify(
-                    f"Configuration '{config_name}' not found.", "Error", "Network Switcher"
+                    f"Configuration '{config_name}' not found.", "Error"
                 )
             return
 
@@ -295,29 +294,28 @@ class TrayApp(QObject):
         success, message = apply_network_config(config_to_apply["adapter_name"], config_to_apply)
 
         title = "Success" if success else "Error"
-        full_title = f"Network Switcher - {title}"
 
         if self.icon:
-            self.icon.notify(message, full_title)
+            self.icon.notify(message, title)
 
         if success:
             if config_to_apply.get("open_router"):
-                self.open_router_signal.emit(
-                    config_to_apply.get("router_ip", ""),
-                    config_to_apply.get("gateway", ""),
-                    config_to_apply.get("router_port", ""),
-                    config_to_apply.get("router_refresh_interval", 5),
-                    config_to_apply.get("router_protocol", "http"),
-                )
+                router_ip_to_open = config_to_apply.get("router_ip")
+                if router_ip_to_open: # Only open if router_ip is set
+                    self.open_router_signal.emit(
+                        router_ip_to_open,
+                        config_to_apply.get("router_port", ""),
+                        config_to_apply.get("router_refresh_interval", 5),
+                        config_to_apply.get("router_protocol", "http")
+                    )
             self.request_tray_menu_refresh_signal.emit()
 
     def _execute_set_dhcp_task(self, adapter_name):
         success, message = set_adapter_to_dhcp(adapter_name)
         title = "Success" if success else "Error"
-        full_title = f"Network Switcher - {title}"
 
         if self.icon:
-            self.icon.notify(message, full_title)
+            self.icon.notify(message, title)
 
         if success:
             self.request_tray_menu_refresh_signal.emit()
@@ -326,24 +324,22 @@ class TrayApp(QObject):
         all_system_adapters, list_err = list_adapters()
         if list_err: # Handle error from list_adapters
             if self.icon:
-                self.icon.notify(f"Wi-Fi apply error: Could not list adapters. {list_err}", "Network Switcher - Wi-Fi Error")
+                self.icon.notify(f"Wi-Fi apply error: Could not list adapters. {list_err}", "Wi-Fi Error")
             return
 
         wifi_adapters_present = [name for name in all_system_adapters if is_wifi_adapter(name)]
 
         if not wifi_adapters_present:
             if self.icon:
-                self.icon.notify("No Wi-Fi adapter found on the system to apply the profile.", "Network Switcher - Wi-Fi Error")
+                self.icon.notify("No Wi-Fi adapter found on the system to apply the profile.", "Wi-Fi Error")
             return
 
         adapter_to_use_for_wifi = wifi_adapters_present[0]
 
         success, message = apply_wifi_profile(ssid, password, adapter_to_use_for_wifi, auth_type)
         title = "Success" if success else "Error"
-        full_title = f"Network Switcher - {title}"
-
         if self.icon:
-            self.icon.notify(message, full_title)
+            self.icon.notify(message, title)
 
         if success:
             self.request_tray_menu_refresh_signal.emit()
@@ -362,7 +358,7 @@ class TrayApp(QObject):
         if not current_config_data:
             error_details = msg if msg else "No details provided."
             if self.icon:
-                self.icon.notify(f"Could not retrieve current settings for {adapter_name}: {error_details}", "Error", "Network Switcher")
+                self.icon.notify(f"Could not retrieve current settings for {adapter_name}: {error_details}", "Error")
             return
 
         if not self.settings_window or not self.settings_window.isVisible():
@@ -383,11 +379,9 @@ class TrayApp(QObject):
         self.settings_window.populate_for_new_save(current_config_data, suggested_name)
 
     def _slot_open_router_page(
-        self, router_ip, gateway_ip, router_port, refresh_interval, protocol
+        self, router_ip, router_port, refresh_interval, protocol
     ):
-        browser = open_router_page(
-            router_ip, gateway_ip, router_port, refresh_interval, protocol
-        )
+        browser = open_router_page(router_ip, router_port, refresh_interval, protocol)
         if browser:
             self.router_windows.append(browser)
             self.router_windows = [w for w in self.router_windows if w.isVisible()]
@@ -395,6 +389,12 @@ class TrayApp(QObject):
     def update_tray_menu(self):
         if self.icon:
             self.icon.menu = self.get_pystray_menu()
+            try:
+                self.icon.update_menu()  # Some pystray versions support this
+            except AttributeError:
+                # Workaround: hide and show to force refresh
+                self.icon.visible = False
+                self.icon.visible = True
 
 
 if __name__ == "__main__":

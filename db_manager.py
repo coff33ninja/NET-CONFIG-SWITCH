@@ -2,6 +2,7 @@ import os
 import sqlite3
 from cryptography.fernet import Fernet, InvalidToken
 import base64
+import binascii
 import json # 1. Import json module
 
 DB_FILE = "network_configs.db"
@@ -72,7 +73,8 @@ class DBManager:
                 router_ip TEXT,
                 router_port TEXT,
                 open_router BOOLEAN,
-                router_protocol TEXT DEFAULT 'http'
+                router_protocol TEXT DEFAULT 'http',
+                router_refresh_interval INTEGER DEFAULT 5
             )
         """
         )
@@ -129,7 +131,8 @@ class DBManager:
                 "router_ip": row[7],
                 "router_port": row[8],
                 "open_router": bool(row[9]),
-                "router_protocol": row[10] if len(row) > 10 and row[10] else 'http',
+                "router_protocol": row[10] if len(row) > 10 and row[10] else 'http', # router_protocol is at index 10
+                "router_refresh_interval": row[11] if len(row) > 11 and row[11] is not None else 5, # router_refresh_interval is at index 11
             }
         conn.close()
         return configs
@@ -142,8 +145,8 @@ class DBManager:
             cursor.execute(
                 """
                 INSERT OR REPLACE INTO configs
-                (name, adapter_name, ip_address, subnet_mask, gateway, dns_primary, dns_secondary, router_ip, router_port, open_router, router_protocol)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                (name, adapter_name, ip_address, subnet_mask, gateway, dns_primary, dns_secondary, router_ip, router_port, open_router, router_protocol, router_refresh_interval)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
                 (
                     config_name,
@@ -157,6 +160,7 @@ class DBManager:
                     config_data["router_port"],
                     int(config_data["open_router"]),
                     config_data.get("router_protocol", "http"),
+                    config_data.get("router_refresh_interval", 5),
                 ),
             )
             conn.commit()
@@ -166,6 +170,27 @@ class DBManager:
             return False, f"Database error saving network configuration '{config_name}': {e}"
         finally:
             conn.close()
+
+    def get_router_config_for_profile(self, profile_name: str) -> dict | None:
+        """
+        Retrieves router-specific configuration details for a given profile name
+        if a router_ip is defined for it.
+        Returns a dictionary with router details, or None.
+        """
+        configs = self.load_configs() # This loads all configs, including refresh interval
+        profile_data = configs.get("networks", {}).get(profile_name)
+
+        # "Router Login IP" must be the only requirement.
+        if profile_data and profile_data.get("router_ip"):
+            return {
+                "router_ip": profile_data["router_ip"], # router_ip is guaranteed to exist here
+                "gateway": profile_data.get("gateway", ""), # Still include gateway if present, but it's not used for the decision
+                "router_port": profile_data.get("router_port", ""),
+                "router_protocol": profile_data.get("router_protocol", "http"),
+                "router_refresh_interval": profile_data.get("router_refresh_interval", 5),
+            }
+        return None
+
 
 
     def delete_config(self, config_name):
@@ -333,7 +358,8 @@ class DBManager:
             export_data = {
                 "network_configurations": configs_data.get("networks", {}),
                 # wifi_profiles_data_list is already a list of tuples
-                "wifi_profiles": wifi_profiles_data_list
+                "wifi_profiles": wifi_profiles_data_list,
+                # router_refresh_interval is part of network_configurations
             }
             json_string = json.dumps(export_data, indent=4)
             return json_string, None
@@ -344,13 +370,11 @@ class DBManager:
     # 4. Implement import_all_data
     def import_all_data(self, json_string: str) -> tuple[bool, str]:
         """Imports network and Wi-Fi configurations from a JSON string."""
-        imported_net_configs_count = 0
-        updated_net_configs_count = 0
+        processed_net_configs_count = 0 # Renamed from imported_net_configs_count for clarity
         failed_net_configs_count = 0
         net_config_errors = []
 
-        imported_wifi_profiles_count = 0
-        updated_wifi_profiles_count = 0 # Assuming save_wifi_profile uses INSERT OR REPLACE
+        processed_wifi_profiles_count = 0 # Renamed from imported_wifi_profiles_count
         failed_wifi_profiles_count = 0
         problematic_wifi_decryption = [] # List of (config_name, ssid) for decryption issues
         wifi_profile_errors = []
@@ -372,12 +396,16 @@ class DBManager:
 
         for name, config_data in network_configs_to_import.items():
             # Basic validation of config_data structure could be added here if needed
+            # Ensure default for router_refresh_interval if missing from older exports
+            if "router_refresh_interval" not in config_data:
+                config_data["router_refresh_interval"] = 5
+
             # For now, assuming save_config handles missing keys gracefully or we trust the export format
             success, msg = self.save_config(name, config_data) # save_config uses INSERT OR REPLACE
             if success:
                 # It's hard to distinguish between new import vs update with INSERT OR REPLACE
                 # For simplicity, let's count all successful saves as "processed"
-                imported_net_configs_count +=1
+                processed_net_configs_count +=1
             else:
                 failed_net_configs_count += 1
                 net_config_errors.append(f"'{name}': {msg}")
@@ -405,9 +433,9 @@ class DBManager:
                     encrypted_bytes = base64.urlsafe_b64decode(encrypted_password_b64.encode('utf-8'))
                     decrypted_bytes = self._fernet.decrypt(encrypted_bytes)
                     plaintext_password = decrypted_bytes.decode('utf-8')
-                    decryption_ok = True
-                except (InvalidToken, base64.binascii.Error, Exception) as e: # Catch specific and general decryption errors
+                except (InvalidToken, binascii.Error, Exception) as e: # Catch specific and general decryption errors
                     problematic_wifi_decryption.append(f"'{ssid}' (Config: '{config_name}', Error: {type(e).__name__})")
+                    print(f"Decryption failed for Wi-Fi profile SSID '{ssid}' under config '{config_name}': {e}")
                     print(f"Decryption failed for Wi-Fi profile SSID '{ssid}' under config '{config_name}': {e}")
             elif auth_type == "open": # If open auth and no password, that's fine
                 decryption_ok = True # Effectively, no password needed
@@ -418,19 +446,19 @@ class DBManager:
             if decryption_ok:
                 success, msg = self.save_wifi_profile(config_name, ssid, plaintext_password, auth_type)
                 if success:
-                    imported_wifi_profiles_count += 1
+                    processed_wifi_profiles_count += 1
                 else:
                     failed_wifi_profiles_count += 1
                     wifi_profile_errors.append(f"'{ssid}' (Config: '{config_name}'): {msg}")
             # If not decryption_ok, it's already added to problematic_wifi_decryption
 
         # Compile Summary Message
-        summary_parts = [f"Import process finished."]
-        summary_parts.append(f"Network Configurations: Processed {imported_net_configs_count}, Failed {failed_net_configs_count}.")
+        summary_parts = ["Import process finished."]
+        summary_parts.append(f"Network Configurations: Processed {processed_net_configs_count}, Failed {failed_net_configs_count}.")
         if net_config_errors:
             summary_parts.append("Network Config Errors:\n- " + "\n- ".join(net_config_errors))
 
-        summary_parts.append(f"Wi-Fi Profiles: Processed {imported_wifi_profiles_count}, Failed to Save {failed_wifi_profiles_count}, Failed to Decrypt {len(problematic_wifi_decryption)}.")
+        summary_parts.append(f"Wi-Fi Profiles: Processed {processed_wifi_profiles_count}, Failed to Save {failed_wifi_profiles_count}, Failed to Decrypt {len(problematic_wifi_decryption)}.")
         if wifi_profile_errors:
             summary_parts.append("Wi-Fi Save Errors:\n- " + "\n- ".join(wifi_profile_errors))
         if problematic_wifi_decryption:

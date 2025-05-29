@@ -5,6 +5,3 @@ network_configs.db
 /.vscode
 *.spec
 /dist
-/cookies
-/tests
-run_tray_app.log
