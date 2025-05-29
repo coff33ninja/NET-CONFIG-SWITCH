@@ -5,6 +5,3 @@ keyring
 PyQt6-WebEngine
 pyinstaller
 cryptography
-WMI
-pywin32
-pywin32-ctypes
