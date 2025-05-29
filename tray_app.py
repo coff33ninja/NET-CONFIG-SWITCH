@@ -396,3 +396,15 @@ class TrayApp(QObject):
                 # Workaround: hide and show to force refresh
                 self.icon.visible = False
                 self.icon.visible = True
+
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    app.setQuitOnLastWindowClosed(False)
+    tray_controller = TrayApp()
+    pystray_thread = threading.Thread(
+        target=tray_controller.start_pystray_in_thread,
+        daemon=True,
+    )
+    pystray_thread.start()
+    sys.exit(app.exec())
