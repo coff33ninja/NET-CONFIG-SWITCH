@@ -64,7 +64,11 @@ class TrayApp(QObject):
             if self.icon:
                 self.icon.notify("Adapter Listing Error", list_err, "Network Switcher")
             # Add an error item to the menu if adapter listing fails
-            menu_items.append(pystray.MenuItem(f"Error listing adapters: {list_err}", enabled=False))
+            menu_items.append(
+                pystray.MenuItem(
+                    f"Error listing adapters: {list_err}", action=None, enabled=False
+                )
+            )
 
         if active_adapters: # Proceed only if adapters were listed
             for adapter_name in active_adapters:
@@ -72,7 +76,7 @@ class TrayApp(QObject):
                 if get_err and not live_config: # Error and no config data
                     adapter_statuses[adapter_name] = f"Error: {get_err}"
                     if self.icon: # Notify user about specific adapter error
-                         self.icon.notify(f"Config Error ({adapter_name})", get_err, "Network Switcher")
+                        self.icon.notify(f"Config Error ({adapter_name})", get_err, "Network Switcher")
                 elif live_config:
                     if live_config.get('dhcp_enabled'):
                         adapter_statuses[adapter_name] = "DHCP"
@@ -279,7 +283,6 @@ class TrayApp(QObject):
         elif self.icon:
             self.icon.notify("Settings window not available for nearby network connection.", "Error", "Network Switcher")
 
-
     def _internal_apply_config_task(self, config_name):
         configs = self.db.load_configs()
         network_configs = configs.get("networks", {})
@@ -311,7 +314,6 @@ class TrayApp(QObject):
                 )
             self.request_tray_menu_refresh_signal.emit()
 
-
     def _execute_set_dhcp_task(self, adapter_name):
         success, message = set_adapter_to_dhcp(adapter_name)
         title = "Success" if success else "Error"
@@ -322,7 +324,6 @@ class TrayApp(QObject):
 
         if success:
             self.request_tray_menu_refresh_signal.emit()
-
 
     def _execute_wifi_task(self, config_name, ssid, password, auth_type):
         all_system_adapters, list_err = list_adapters()
@@ -350,7 +351,6 @@ class TrayApp(QObject):
         if success:
             self.request_tray_menu_refresh_signal.emit()
 
-
     def _slot_run_settings_gui(self):
         if not self.settings_window or not self.settings_window.isVisible():
             self.settings_window = SettingsGUI(self)
@@ -358,7 +358,6 @@ class TrayApp(QObject):
         else:
             self.settings_window.activateWindow()
             self.settings_window.showNormal()
-
 
     def _slot_prepare_settings_for_save_current(self, adapter_name):
         current_config_data, msg = get_current_adapter_config(adapter_name)
