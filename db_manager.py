@@ -369,13 +369,11 @@ class DBManager:
     # 4. Implement import_all_data
     def import_all_data(self, json_string: str) -> tuple[bool, str]:
         """Imports network and Wi-Fi configurations from a JSON string."""
-        imported_net_configs_count = 0
-        updated_net_configs_count = 0
+        processed_net_configs_count = 0 # Renamed from imported_net_configs_count for clarity
         failed_net_configs_count = 0
         net_config_errors = []
 
-        imported_wifi_profiles_count = 0
-        updated_wifi_profiles_count = 0 # Assuming save_wifi_profile uses INSERT OR REPLACE
+        processed_wifi_profiles_count = 0 # Renamed from imported_wifi_profiles_count
         failed_wifi_profiles_count = 0
         problematic_wifi_decryption = [] # List of (config_name, ssid) for decryption issues
         wifi_profile_errors = []
@@ -406,7 +404,7 @@ class DBManager:
             if success:
                 # It's hard to distinguish between new import vs update with INSERT OR REPLACE
                 # For simplicity, let's count all successful saves as "processed"
-                imported_net_configs_count +=1
+                processed_net_configs_count +=1
             else:
                 failed_net_configs_count += 1
                 net_config_errors.append(f"'{name}': {msg}")
@@ -447,19 +445,19 @@ class DBManager:
             if decryption_ok:
                 success, msg = self.save_wifi_profile(config_name, ssid, plaintext_password, auth_type)
                 if success:
-                    imported_wifi_profiles_count += 1
+                    processed_wifi_profiles_count += 1
                 else:
                     failed_wifi_profiles_count += 1
                     wifi_profile_errors.append(f"'{ssid}' (Config: '{config_name}'): {msg}")
             # If not decryption_ok, it's already added to problematic_wifi_decryption
 
         # Compile Summary Message
-        summary_parts = [f"Import process finished."]
-        summary_parts.append(f"Network Configurations: Processed {imported_net_configs_count}, Failed {failed_net_configs_count}.")
+        summary_parts = ["Import process finished."]
+        summary_parts.append(f"Network Configurations: Processed {processed_net_configs_count}, Failed {failed_net_configs_count}.")
         if net_config_errors:
             summary_parts.append("Network Config Errors:\n- " + "\n- ".join(net_config_errors))
 
-        summary_parts.append(f"Wi-Fi Profiles: Processed {imported_wifi_profiles_count}, Failed to Save {failed_wifi_profiles_count}, Failed to Decrypt {len(problematic_wifi_decryption)}.")
+        summary_parts.append(f"Wi-Fi Profiles: Processed {processed_wifi_profiles_count}, Failed to Save {failed_wifi_profiles_count}, Failed to Decrypt {len(problematic_wifi_decryption)}.")
         if wifi_profile_errors:
             summary_parts.append("Wi-Fi Save Errors:\n- " + "\n- ".join(wifi_profile_errors))
         if problematic_wifi_decryption:
