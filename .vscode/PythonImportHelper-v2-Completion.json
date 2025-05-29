@@ -278,6 +278,14 @@
         "documentation": {}
     },
     {
+        "label": "list_adapters",
+        "importPath": "network_manager",
+        "description": "network_manager",
+        "isExtraImport": true,
+        "detail": "network_manager",
+        "documentation": {}
+    },
+    {
         "label": "validate_ip",
         "importPath": "network_manager",
         "description": "network_manager",
@@ -398,15 +406,7 @@
         "documentation": {}
     },
     {
-        "label": "get_wifi_profiles",
-        "importPath": "network_manager",
-        "description": "network_manager",
-        "isExtraImport": true,
-        "detail": "network_manager",
-        "documentation": {}
-    },
-    {
-        "label": "get_wifi_password",
+        "label": "# Keep get_available_networks\r\n    get_adapter_statuses",
         "importPath": "network_manager",
         "description": "network_manager",
         "isExtraImport": true,
@@ -448,6 +448,15 @@
         "documentation": {}
     },
     {
+        "label": "binascii",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "binascii",
+        "description": "binascii",
+        "detail": "binascii",
+        "documentation": {}
+    },
+    {
         "label": "json",
         "kind": 6,
         "isExtraImport": true,
@@ -463,15 +472,6 @@
         "importPath": "re",
         "description": "re",
         "detail": "re",
-        "documentation": {}
-    },
-    {
-        "label": "xml.etree.ElementTree",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "xml.etree.ElementTree",
-        "description": "xml.etree.ElementTree",
-        "detail": "xml.etree.ElementTree",
         "documentation": {}
     },
     {
@@ -548,14 +548,6 @@
     },
     {
         "label": "QMenu",
-        "importPath": "PyQt6.QtWidgets",
-        "description": "PyQt6.QtWidgets",
-        "isExtraImport": true,
-        "detail": "PyQt6.QtWidgets",
-        "documentation": {}
-    },
-    {
-        "label": "QComboBox",
         "importPath": "PyQt6.QtWidgets",
         "description": "PyQt6.QtWidgets",
         "isExtraImport": true,
@@ -824,14 +816,6 @@
         "description": "PyQt6.QtGui",
         "isExtraImport": true,
         "detail": "PyQt6.QtGui",
-        "documentation": {}
-    },
-    {
-        "label": "urlparse",
-        "importPath": "urllib.parse",
-        "description": "urllib.parse",
-        "isExtraImport": true,
-        "detail": "urllib.parse",
         "documentation": {}
     },
     {
@@ -1611,20 +1595,11 @@
         "documentation": {}
     },
     {
-        "label": "get_adapter_details_wmi",
-        "kind": 2,
-        "importPath": "network_manager",
-        "description": "network_manager",
-        "peekOfCode": "def get_adapter_details_wmi() -> list[dict]:\n    \"\"\"\n    Fetches detailed network adapter information using WMI (Windows Management Instrumentation).\n    Returns a list of dictionaries, each containing 'short_name', 'detailed_name', and 'index'.\n    Returns an empty list if WMI is not available or if an error occurs.\n    \"\"\"\n    if not WMI_AVAILABLE:\n        return []\n    adapter_details = []\n    try:",
-        "detail": "network_manager",
-        "documentation": {}
-    },
-    {
         "label": "list_adapters",
         "kind": 2,
         "importPath": "network_manager",
         "description": "network_manager",
-        "peekOfCode": "def list_adapters() -> tuple[list[tuple[str, str]], str | None]:\n    \"\"\"\n    List available and connected network adapters.\n    Uses netsh for primary listing and WMI for detailed names if available.\n    Returns a list of tuples (short_name, detailed_name) and an optional message string.\n    \"\"\"\n    parsed_short_names = []\n    netsh_message = None\n    wmi_message = None\n    result_adapters_list = []",
+        "peekOfCode": "def list_adapters() -> tuple[list[tuple[str, str]], str | None]:\n    \"\"\"\n    List available and connected network adapters.\n    Uses PowerShell to get adapter names (short_name, detailed_name).\n    Returns a list of tuples (short_name, detailed_name) and an optional message string.\n    \"\"\"\n    result_adapters_list = []\n    adapters_data, error_msg = _get_adapter_details_powershell()\n    if error_msg:\n        return [], error_msg",
         "detail": "network_manager",
         "documentation": {}
     },
@@ -1701,11 +1676,29 @@
         "documentation": {}
     },
     {
+        "label": "get_adapter_statuses",
+        "kind": 2,
+        "importPath": "network_manager",
+        "description": "network_manager",
+        "peekOfCode": "def get_adapter_statuses(saved_configs):\n    \"\"\"\n    Fetch the statuses of all active adapters and compare them with saved configurations.\n    Returns a dictionary of adapter statuses and an optional error message.\n    \"\"\"\n    adapter_statuses = {}\n    active_adapters, list_err = list_adapters()\n    if list_err:\n        return adapter_statuses, list_err\n    for short_name, detailed_name in active_adapters:",
+        "detail": "network_manager",
+        "documentation": {}
+    },
+    {
+        "label": "MAX_MESSAGE_LENGTH_FOR_NOTIFY",
+        "kind": 5,
+        "importPath": "network_manager",
+        "description": "network_manager",
+        "peekOfCode": "MAX_MESSAGE_LENGTH_FOR_NOTIFY = 250\ndef _sanitize_message_for_notification(message: str) -> str:\n    \"\"\"Ensures a message is suitable for pystray notification by truncating if too long.\"\"\"\n    if len(message) > MAX_MESSAGE_LENGTH_FOR_NOTIFY:\n        return message[:MAX_MESSAGE_LENGTH_FOR_NOTIFY - 3] + \"...\"\n    return message\ndef validate_ip(ip):\n    \"\"\"Validate IP address: each octet must be 0–255.\"\"\"\n    if not ip:\n        return True",
+        "detail": "network_manager",
+        "documentation": {}
+    },
+    {
         "label": "RouterBrowser",
         "kind": 6,
         "importPath": "router_browser",
         "description": "router_browser",
-        "peekOfCode": "class RouterBrowser(QMainWindow):\n    \"\"\"Custom browser for router login with navigation, credentials, and HTTPS support.\"\"\"\n    def __init__(self, router_ip, gateway, router_port=None, refresh_interval=5000, preferred_protocol=\"http\"):\n        super().__init__()\n        if not router_ip and not gateway: # Ensure at least one is provided\n            raise ValueError(\"Router IP or gateway must be provided for RouterBrowser.\")\n        self.target_ip = router_ip or gateway\n        self.router_port = router_port\n        self.current_protocol_is_https = (preferred_protocol.lower() == \"https\")\n        self.refresh_interval = refresh_interval",
+        "peekOfCode": "class RouterBrowser(QMainWindow):\n    \"\"\"Custom browser for router login with navigation, credentials, and HTTPS support.\"\"\"\n    def __init__(self, router_ip, router_port=None, refresh_interval=5000, preferred_protocol=\"http\"):\n        super().__init__()\n        if not router_ip: # Ensure router_ip is provided\n            raise ValueError(\"Router IP must be provided for RouterBrowser.\")\n        self.target_ip = router_ip # Use router_ip directly\n        self.router_port = router_port\n        self.current_protocol_is_https = (preferred_protocol.lower() == \"https\")\n        self.refresh_interval = refresh_interval",
         "detail": "router_browser",
         "documentation": {}
     },
@@ -1714,7 +1707,7 @@
         "kind": 2,
         "importPath": "router_browser",
         "description": "router_browser",
-        "peekOfCode": "def open_router_page(router_ip, gateway, router_port=None, refresh_interval=5, protocol=\"http\"):\n    \"\"\"Open the router login page in a custom browser.\"\"\"\n    if not QApplication.instance():\n        QApplication(sys.argv)\n    if not router_ip and not gateway:\n        QMessageBox.critical(None, \"Error\", \"No router IP or gateway provided.\")\n        print(\"Error: No router IP or gateway provided.\")\n        return None\n    try:\n        browser = RouterBrowser(router_ip, gateway, router_port, refresh_interval * 1000, preferred_protocol=protocol)",
+        "peekOfCode": "def open_router_page(router_ip, router_port=None, refresh_interval=5, protocol=\"http\"):\n    \"\"\"Open the router login page in a custom browser.\"\"\"\n    if not QApplication.instance():\n        QApplication(sys.argv)\n    if not router_ip: # Check only for router_ip\n        QMessageBox.critical(None, \"Error\", \"No router IP provided.\")\n        print(\"Error: No router IP provided.\")\n        return None\n    try:\n        browser = RouterBrowser(router_ip, router_port, refresh_interval * 1000, preferred_protocol=protocol)",
         "detail": "router_browser",
         "documentation": {}
     },
@@ -1723,7 +1716,7 @@
         "kind": 6,
         "importPath": "settings_gui",
         "description": "settings_gui",
-        "peekOfCode": "class SettingsGUI(QMainWindow):\n    \"\"\"GUI for managing network configurations using PyQt6.\"\"\"\n    def __init__(self, main_app_controller):\n        super().__init__()\n        self.main_app_controller = main_app_controller\n        try:\n            self.db = DBManager()\n        except Exception as e:\n            QMessageBox.critical(self, \"Database Error\", f\"Failed to initialize database manager: {e}\\nSettings GUI cannot function properly.\")\n            print(f\"CRITICAL: DBManager failed to initialize: {e}\")",
+        "peekOfCode": "class SettingsGUI(QMainWindow):\n    \"\"\"GUI for managing network configurations using PyQt6.\"\"\"\n    # Declare attributes for QLineEdit fields and other UI elements for type hinting\n    config_name: QLineEdit\n    ip_address: QLineEdit\n    subnet_mask: QLineEdit\n    gateway: QLineEdit\n    dns_primary: QLineEdit\n    dns_secondary: QLineEdit\n    router_ip: QLineEdit",
         "detail": "settings_gui",
         "documentation": {}
     },
@@ -1732,7 +1725,7 @@
         "kind": 6,
         "importPath": "settings_gui",
         "description": "settings_gui",
-        "peekOfCode": "class ViewConfigsDialog(QDialog):\n    def __init__(self, configs_data, parent=None):\n        super().__init__(parent)\n        self.setWindowTitle(\"Saved Network Configurations\")\n        self.resize(800, 450)\n        layout = QVBoxLayout(self)\n        self.table_widget = QTableWidget()\n        self.table_widget.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)\n        self.table_widget.horizontalHeader().setStretchLastSection(True)\n        layout.addWidget(self.table_widget)",
+        "peekOfCode": "class ViewConfigsDialog(QDialog):\n    # Forward reference for SettingsGUI type hint\n    def __init__(self, configs_data, parent_settings_gui: 'SettingsGUI | None' = None):\n        super().__init__(parent_settings_gui) # Pass it as QWidget parent\n        self.parent_settings_gui = parent_settings_gui # Store it for typed access\n        self.setWindowTitle(\"Saved Network Configurations\")\n        self.resize(800, 450)\n        layout = QVBoxLayout(self)\n        self.table_widget = QTableWidget()\n        self.table_widget.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)",
         "detail": "settings_gui",
         "documentation": {}
     },
@@ -1741,7 +1734,7 @@
         "kind": 6,
         "importPath": "tray_app",
         "description": "tray_app",
-        "peekOfCode": "class TrayApp(QObject):\n    \"\"\"System tray application for network configuration.\"\"\"\n    show_settings_signal = pyqtSignal()\n    prepare_settings_for_save_current_signal = pyqtSignal(str)\n    request_tray_menu_refresh_signal = pyqtSignal()\n    open_router_signal = pyqtSignal(str, str, str, int, str)\n    def __init__(self):\n        super().__init__()\n        self.db = DBManager()\n        self.icon = None",
+        "peekOfCode": "class TrayApp(QObject):\n    \"\"\"System tray application for network configuration.\"\"\"\n    show_settings_signal = pyqtSignal()\n    prepare_settings_for_save_current_signal = pyqtSignal(str)\n    request_tray_menu_refresh_signal = pyqtSignal()\n    open_router_signal = pyqtSignal(str, str, int, str) # router_ip, port, interval, protocol\n    def __init__(self):\n        super().__init__()\n        self.db = DBManager()\n        self.icon = None",
         "detail": "tray_app",
         "documentation": {}
     },
@@ -1750,7 +1743,7 @@
         "kind": 5,
         "importPath": "tray_app",
         "description": "tray_app",
-        "peekOfCode": "ICON_PATH = \"network.ico\"\nclass TrayApp(QObject):\n    \"\"\"System tray application for network configuration.\"\"\"\n    show_settings_signal = pyqtSignal()\n    prepare_settings_for_save_current_signal = pyqtSignal(str)\n    request_tray_menu_refresh_signal = pyqtSignal()\n    open_router_signal = pyqtSignal(str, str, str, int, str)\n    def __init__(self):\n        super().__init__()\n        self.db = DBManager()",
+        "peekOfCode": "ICON_PATH = \"network.ico\"\nclass TrayApp(QObject):\n    \"\"\"System tray application for network configuration.\"\"\"\n    show_settings_signal = pyqtSignal()\n    prepare_settings_for_save_current_signal = pyqtSignal(str)\n    request_tray_menu_refresh_signal = pyqtSignal()\n    open_router_signal = pyqtSignal(str, str, int, str) # router_ip, port, interval, protocol\n    def __init__(self):\n        super().__init__()\n        self.db = DBManager()",
         "detail": "tray_app",
         "documentation": {}
     }
