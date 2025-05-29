@@ -1611,11 +1611,11 @@
         "documentation": {}
     },
     {
-        "label": "get_adapter_details_wmi",
+        "label": "get_adapter_details_ps",
         "kind": 2,
         "importPath": "network_manager",
         "description": "network_manager",
-        "peekOfCode": "def get_adapter_details_wmi() -> list[dict]:\n    \"\"\"\n    Fetches detailed network adapter information using WMI (Windows Management Instrumentation).\n    Returns a list of dictionaries, each containing 'short_name', 'detailed_name', and 'index'.\n    Returns an empty list if WMI is not available or if an error occurs.\n    \"\"\"\n    if not WMI_AVAILABLE:\n        return []\n    adapter_details = []\n    try:",
+        "peekOfCode": "def get_adapter_details_ps() -> list[dict]:\n    \"\"\"\n    Fetches detailed network adapter information using PowerShell Get-NetAdapter.\n    Returns a list of dictionaries, each containing 'short_name', 'detailed_name', and 'index'.\n    Returns an empty list if an error occurs.\n    \"\"\"\n    adapter_details = []\n    try:\n        ps_cmd = (\n            'powershell -Command \"Get-NetAdapter | '",
         "detail": "network_manager",
         "documentation": {}
     },
@@ -1624,7 +1624,7 @@
         "kind": 2,
         "importPath": "network_manager",
         "description": "network_manager",
-        "peekOfCode": "def list_adapters() -> tuple[list[tuple[str, str]], str | None]:\n    \"\"\"\n    List available and connected network adapters.\n    Uses netsh for primary listing and WMI for detailed names if available.\n    Returns a list of tuples (short_name, detailed_name) and an optional message string.\n    \"\"\"\n    parsed_short_names = []\n    netsh_message = None\n    wmi_message = None\n    result_adapters_list = []",
+        "peekOfCode": "def list_adapters() -> tuple[list[tuple[str, str]], str | None]:\n    \"\"\"\n    List available and connected network adapters.\n    Uses netsh for primary listing and PowerShell for detailed names.\n    Returns a list of tuples (short_name, detailed_name) and an optional message string.\n    \"\"\"\n    parsed_short_names = []\n    netsh_message = None\n    ps_message = None\n    result_adapters_list = []",
         "detail": "network_manager",
         "documentation": {}
     },

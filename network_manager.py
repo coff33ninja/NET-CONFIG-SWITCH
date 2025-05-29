@@ -4,19 +4,6 @@ import xml.etree.ElementTree as ET
 import tempfile
 import os
 
-# 1. Add WMI Import and Availability Check
-# Requires: pip install WMI (for detailed adapter names on Windows)
-# pywin32 is often a dependency for WMI and might be needed as well.
-try:
-    import wmi
-    WMI_AVAILABLE = True
-except ImportError:
-    WMI_AVAILABLE = False
-    # Optional: print a one-time warning for developers/users if needed
-    # print("Warning: WMI library not found. Detailed adapter names will not be available. "
-    #       "Install with: pip install WMI pywin32")
-
-
 def validate_ip(ip):
     """Validate IP address: each octet must be 0–255."""
     if not ip:
@@ -165,49 +152,59 @@ def set_adapter_to_dhcp(adapter_name):
             error_message += f" Details: {e.stdout.strip()}"
         return False, error_message
 
-# 2. Implement get_adapter_details_wmi()
-def get_adapter_details_wmi() -> list[dict]:
+# Replace get_adapter_details_wmi() with PowerShell-based logic
+def get_adapter_details_ps() -> list[dict]:
     """
-    Fetches detailed network adapter information using WMI (Windows Management Instrumentation).
+    Fetches detailed network adapter information using PowerShell Get-NetAdapter.
     Returns a list of dictionaries, each containing 'short_name', 'detailed_name', and 'index'.
-    Returns an empty list if WMI is not available or if an error occurs.
+    Returns an empty list if an error occurs.
     """
-    if not WMI_AVAILABLE:
-        return []
-
     adapter_details = []
     try:
-        c = wmi.WMI()
-        # Query for adapters that have a NetConnectionID (usually implies they are configurable in Network Connections),
-        # are physical adapters, and are network enabled.
-        raw_adapters = c.Win32_NetworkAdapter(NetConnectionIDIsNotNull=True, PhysicalAdapter=True, NetEnabled=True)
-
-        for adapter in raw_adapters:
-            # Use Description if available and not None/empty, otherwise fallback to Name.
-            # Some virtual adapters might have Name but no useful Description.
-            # NetConnectionID is typically the "short name" seen in netsh or Network Connections UI.
-            detailed_name = adapter.Description if adapter.Description else adapter.Name
-            adapter_details.append({
-                'short_name': adapter.NetConnectionID,
-                'detailed_name': detailed_name,
-                'index': adapter.InterfaceIndex # InterfaceIndex can be useful for other operations
-            })
+        ps_cmd = (
+            'powershell -Command "Get-NetAdapter | '
+            'Select-Object -Property Name,InterfaceDescription,InterfaceIndex | '
+            'Format-Table -HideTableHeaders"'
+        )
+        result = subprocess.run(
+            ps_cmd,
+            shell=True,
+            capture_output=True,
+            text=True,
+            check=True,
+            errors="ignore"
+        )
+        for line in result.stdout.splitlines():
+            # Each line: Name <whitespace> InterfaceDescription <whitespace> InterfaceIndex
+            parts = re.split(r'\s{2,}', line.strip())
+            if len(parts) >= 3:
+                short_name = parts[0]
+                detailed_name = parts[1]
+                try:
+                    index = int(parts[2])
+                except ValueError:
+                    index = -1
+                adapter_details.append({
+                    'short_name': short_name,
+                    'detailed_name': detailed_name,
+                    'index': index
+                })
+        return adapter_details
     except Exception as e:
         # Using print here as this is a utility function; logging would be better in a larger app.
-        print(f"Error fetching WMI adapter details: {e}")
-        return [] # Return empty list on error
-    return adapter_details
+        print(f"Error fetching adapter details via PowerShell: {e}")
+        return []
 
-# 3. Modify list_adapters()
+# Update list_adapters() to use PowerShell-based details instead of WMI
 def list_adapters() -> tuple[list[tuple[str, str]], str | None]:
     """
     List available and connected network adapters.
-    Uses netsh for primary listing and WMI for detailed names if available.
+    Uses netsh for primary listing and PowerShell for detailed names.
     Returns a list of tuples (short_name, detailed_name) and an optional message string.
     """
     parsed_short_names = []
     netsh_message = None
-    wmi_message = None
+    ps_message = None
     result_adapters_list = []
 
     try:
@@ -241,29 +238,25 @@ def list_adapters() -> tuple[list[tuple[str, str]], str | None]:
     except Exception as e:
         netsh_message = f"Unexpected error in netsh part of list_adapters: {e}"
 
-    # WMI part
-    wmi_map = {}
-    if WMI_AVAILABLE:
-        wmi_details_list = get_adapter_details_wmi()
-        if wmi_details_list:
-            wmi_map = {item['short_name']: item['detailed_name'] for item in wmi_details_list}
-        else:
-            # WMI is available but returned no data or get_adapter_details_wmi itself had an internal error (already printed by it)
-             wmi_message = "WMI query failed or returned no detailed adapter data."
+    # PowerShell part (replacing WMI)
+    ps_map = {}
+    ps_details_list = get_adapter_details_ps()
+    if ps_details_list:
+        ps_map = {item['short_name']: item['detailed_name'] for item in ps_details_list}
     else:
-        wmi_message = "WMI library not available; detailed adapter names could not be fetched."
+        ps_message = "PowerShell query failed or returned no detailed adapter data."
 
     # Combine results
     for short_name in parsed_short_names:
-        detailed_name = wmi_map.get(short_name, short_name) # Fallback to short_name
+        detailed_name = ps_map.get(short_name, short_name) # Fallback to short_name
         result_adapters_list.append((short_name, detailed_name))
 
     # Combine messages
     final_message = None
-    if netsh_message and wmi_message:
-        final_message = f"{netsh_message} {wmi_message}"
+    if netsh_message and ps_message:
+        final_message = f"{netsh_message} {ps_message}"
     else:
-        final_message = netsh_message or wmi_message
+        final_message = netsh_message or ps_message
 
     if not result_adapters_list and not final_message: # If list is empty and no errors, means no adapters
         final_message = "No connected network adapters found."
