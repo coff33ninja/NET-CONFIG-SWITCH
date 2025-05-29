@@ -100,9 +100,18 @@ if not exist "%VENV_PRIMARY_NAME%" (
     REM Activate the virtual environment
     call "%VENV_PRIMARY_NAME%\Scripts\activate.bat"
 
+    REM Upgrade pip
+    echo Upgrading pip...
+    python pip install --upgrade pip
+    if errorlevel 1 (
+        echo ERROR: Failed to upgrade pip.
+        exit /B
+    )
+    echo pip upgraded successfully.
+
     REM Install required packages
     echo Installing required Python packages...
-    pip install PyQt6 pystray pillow keyring PyQt6-WebEngine pyinstaller cryptography WMI pywin32
+    python pip install PyQt6 pystray pillow keyring PyQt6-WebEngine pyinstaller cryptography WMI pywin32
     if errorlevel 1 (
         echo ERROR: Failed to install required packages.
         exit /B
